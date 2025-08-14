@@ -1,0 +1,38 @@
+package ar.utn.ba.ddsi.fuente_proxy.models.dtos.input;
+
+import ar.edu.utn.frba.dds.models.entities.coleccion.Hecho;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+public class HechoDTO {
+    private Long id;
+    private String titulo;
+    private String descripcion;
+    private String categoria;
+    private String latitud;
+    private String longitud;
+    private LocalDate fecAcontecimiento;
+    private LocalDate fecCarga;
+
+    public static HechoDTO toDTO(Long id, String titulo, String descripcion, String categoria, String latitud, String longitud) {
+        return HechoDTO
+                .builder()
+                .id(id)
+                .titulo(titulo)
+                .descripcion(descripcion)
+                .categoria(categoria)
+                .latitud(latitud)
+                .longitud(longitud)
+                .fecAcontecimiento(LocalDate.now())
+                .fecCarga(LocalDate.now())
+                .build();
+    }
+}
