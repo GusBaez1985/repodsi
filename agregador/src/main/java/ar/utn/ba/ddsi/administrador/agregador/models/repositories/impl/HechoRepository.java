@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class HechoRepository implements IHechoRepository {
@@ -29,4 +30,11 @@ public class HechoRepository implements IHechoRepository {
 	public void delete(Hecho hecho) {
 		this.hechos.remove(hecho);
 	}
+
+    @Override
+    public Optional<Hecho> findById(Long id) {
+        return this.hechos.stream()
+                .filter(h -> h.getId().equals(id))
+                .findFirst();
+    }
 }

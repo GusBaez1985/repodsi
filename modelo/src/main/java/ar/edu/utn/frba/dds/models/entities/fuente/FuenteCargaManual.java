@@ -1,10 +1,16 @@
 package ar.edu.utn.frba.dds.models.entities.fuente;
 
 import ar.edu.utn.frba.dds.models.entities.coleccion.Hecho;
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.List;
+@Getter
+@Setter
 public class FuenteCargaManual implements Fuente {
-    public FuenteCargaManual() {
+    private Long id;
+
+    public FuenteCargaManual(String s) {
     }
 
     @Override

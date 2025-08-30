@@ -37,7 +37,7 @@ public class SpamTest {
                 "Caída de aeronave",
                 new Ubicacion("-36.868375", "-60.343297"),
                 LocalDate.of(2001, 11, 29),
-                new FuenteCargaManual()
+                new FuenteCargaManual("Fuente de Carga Manual para Test")
         );
         SolicitudEliminacion solicitud = servicio.crearYProcesarSolicitud("¡Gana dinero rápido con esta promoción!", hecho, 1L);
 
@@ -53,7 +53,7 @@ public class SpamTest {
                 "Caída de aeronave",
                 new Ubicacion("-36.868375", "-60.343297"),
                 LocalDate.of(2001, 11, 29),
-                new FuenteCargaManual()
+                new FuenteCargaManual("Fuente de Carga Manual para Test")
         );
         SolicitudEliminacion solicitud = servicio.crearYProcesarSolicitud("Considero que este hecho es inexacto", hecho, 2L);
 

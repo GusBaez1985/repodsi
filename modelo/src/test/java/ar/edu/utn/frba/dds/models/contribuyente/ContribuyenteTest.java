@@ -23,7 +23,7 @@ public class ContribuyenteTest {
                 "Caída de aeronave",
                 new Ubicacion("-36.868375", "-60.343297"),
                 LocalDate.of(2001, 11, 29),
-                new FuenteCargaManual()
+                new FuenteCargaManual("Fuente de Carga Manual para Test")
         );
 
         Hecho hecho2 = Hecho.of(
@@ -33,7 +33,7 @@ public class ContribuyenteTest {
                 "Accidente con maquinaria industrial",
                 new Ubicacion("-37.345571", "-70.241485"),
                 LocalDate.of(2001, 8, 16),
-                new FuenteCargaManual()
+                new FuenteCargaManual("Fuente de Carga Manual para Test")
         );
 
         Hecho hecho3 = Hecho.of(
@@ -43,7 +43,7 @@ public class ContribuyenteTest {
                 "Caída de aeronave",
                 new Ubicacion("-33.768051", "-61.921032"),
                 LocalDate.of(2008, 8, 8),
-                new FuenteCargaManual()
+                new FuenteCargaManual("Fuente de Carga Manual para Test")
         );
 
         Hecho hecho4 = Hecho.of(
@@ -53,7 +53,7 @@ public class ContribuyenteTest {
                 "Accidente en paso a nivel",
                 new Ubicacion("-35.855811", "-61.940589"),
                 LocalDate.of(2020, 1, 27),
-                new FuenteCargaManual()
+                new FuenteCargaManual("Fuente de Carga Manual para Test")
         );
 
         Hecho hecho5 = Hecho.of(
@@ -63,7 +63,7 @@ public class ContribuyenteTest {
                 "Derrumbe en obra en construcción",
                 new Ubicacion("-26.780008", "-60.458782"),
                 LocalDate.of(2016, 6, 4),
-                new FuenteCargaManual()
+                new FuenteCargaManual("Fuente de Carga Manual para Test")
         );
 
         return List.of(hecho1, hecho2, hecho3, hecho4, hecho5);

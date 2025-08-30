@@ -9,17 +9,20 @@ import ar.edu.utn.frba.dds.models.entities.criterios.CriterioFechaEntre;
 import ar.edu.utn.frba.dds.models.entities.criterios.CriterioPorCategoria;
 import ar.edu.utn.frba.dds.models.entities.fuente.FuenteCargaManual;
 
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
 public class ColeccionTest {
 
     //  Método auxiliar que crea y devuelve todos los hechos del escenario 1
     private List<Hecho> hechosDePrueba() {
+        FuenteCargaManual fuenteDePrueba = new FuenteCargaManual("Fuente de Carga Manual para Test");
+        fuenteDePrueba.setId(1L); // Le asignamos un ID de prueba.
         Hecho hecho1 = Hecho.of(
                 "Caída de aeronave impacta en Olavarría",
                 "Grave caída de aeronave ocurrió en las inmediaciones de Olavarría, Buenos Aires. El incidente provocó pánico entre los residentes locales. Voluntarios de diversas organizaciones se han sumado a las tareas de auxilio.",
@@ -27,7 +30,7 @@ public class ColeccionTest {
                 "Caída de aeronave",
                 new Ubicacion("-36.868375", "-60.343297"),
                 LocalDate.of(2001, 11, 29),
-                new FuenteCargaManual()
+                fuenteDePrueba
 
         );
 
@@ -38,7 +41,7 @@ public class ColeccionTest {
                 "Accidente con maquinaria industrial",
                 new Ubicacion("-37.345571", "-70.241485"),
                 LocalDate.of(2001, 8, 16),
-                new FuenteCargaManual()
+                fuenteDePrueba
         );
 
         Hecho hecho3 = Hecho.of(
@@ -48,7 +51,7 @@ public class ColeccionTest {
                 "Caída de aeronave",
                 new Ubicacion("-33.768051", "-61.921032"),
                 LocalDate.of(2008, 8, 8),
-                new FuenteCargaManual()
+                fuenteDePrueba
         );
 
         Hecho hecho4 = Hecho.of(
@@ -58,7 +61,7 @@ public class ColeccionTest {
                 "Accidente en paso a nivel",
                 new Ubicacion("-35.855811", "-61.940589"),
                 LocalDate.of(2020, 1, 27),
-                new FuenteCargaManual()
+                fuenteDePrueba
         );
 
         Hecho hecho5 = Hecho.of(
@@ -68,7 +71,7 @@ public class ColeccionTest {
                 "Derrumbe en obra en construcción",
                 new Ubicacion("-26.780008", "-60.458782"),
                 LocalDate.of(2016, 6, 4),
-                new FuenteCargaManual()
+                fuenteDePrueba
         );
 
         return List.of(hecho1, hecho2, hecho3, hecho4, hecho5);

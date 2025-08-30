@@ -49,7 +49,7 @@ class AdministradorTest {
 
         fuenteDataset.importarHechos();
         String motivo = "Este hecho debe eliminarse".repeat(30);
-        SolicitudEliminacion solicitudEliminacion = new SolicitudEliminacion(motivo, fuenteDataset.getHechos().get(1), 1L);
+        SolicitudEliminacion solicitudEliminacion = new SolicitudEliminacion(motivo, fuenteDataset.getHechos().get(1).getId(), 1L);
         admin.aprobarSolicitudEliminacion(solicitudEliminacion);
         Assertions.assertEquals(true,fuenteDataset.getHechos().get(1).getEliminado());
     }
@@ -63,7 +63,7 @@ class AdministradorTest {
 
         fuenteDataset.importarHechos();
         String motivo = "Este hecho debe eliminarse".repeat(30);
-        SolicitudEliminacion solicitudEliminacion = new SolicitudEliminacion(motivo, fuenteDataset.getHechos().get(1), 1L);
+        SolicitudEliminacion solicitudEliminacion = new SolicitudEliminacion(motivo, fuenteDataset.getHechos().get(1).getId(), 1L);
         admin.rechazarSolicitudEliminacion(solicitudEliminacion);
         Assertions.assertEquals(false,fuenteDataset.getHechos().get(1).getEliminado());
     }

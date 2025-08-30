@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface ISolicitudEliminacionRepository {
 	public List<SolicitudEliminacion> findAll();
-	public void save(SolicitudEliminacion solicitud);
+	public SolicitudEliminacion save(SolicitudEliminacion solicitud);
 	public void delete(SolicitudEliminacion solicitud);
 }
 

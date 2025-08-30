@@ -28,7 +28,7 @@ public class SeederService implements ISeederService {
     @Override
     public void init() {
         // Fuente y ubicación ficticia
-        Fuente fuenteDummy = new FuenteCargaManual();
+        Fuente fuenteDummy = new FuenteCargaManual("Fuente");
         Ubicacion ubicacionDummy = new Ubicacion("40.7128", "-74.0060"); // Latitud y longitud de ejemplo
 
         // Hecho 1

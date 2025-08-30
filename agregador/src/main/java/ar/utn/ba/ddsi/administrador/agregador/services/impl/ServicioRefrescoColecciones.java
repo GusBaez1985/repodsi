@@ -33,9 +33,7 @@ public class ServicioRefrescoColecciones implements IServicioRefrescoColecciones
     private void refrescarFuente(IHechoRepository fuente) {
         List<Hecho> hechos = fuente.findAll();
 
-        hechos.forEach(hecho -> {
-            fuente.save(hecho);
-        });
+        hechos.forEach(fuente::save);
 
         System.out.println("Refrescada fuente: " + fuente.getClass().getSimpleName());
     }

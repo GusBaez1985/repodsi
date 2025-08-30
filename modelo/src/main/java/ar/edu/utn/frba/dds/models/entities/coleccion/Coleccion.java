@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.models.entities.coleccion;
 
+import ar.edu.utn.frba.dds.models.entities.fuente.Fuente;
 import ar.edu.utn.frba.dds.models.entities.interfaces.AlgoritmoDeConsenso;
 import ar.edu.utn.frba.dds.models.entities.criterios.CriterioDePertenencia;
 import ar.edu.utn.frba.dds.models.repositories.IHechoRepository;
@@ -19,7 +20,7 @@ public class Coleccion {
     private List<Hecho> hechos;
     private AlgoritmoDeConsenso algoritmoDeConsenso; // puede ser null
     private List<Hecho> hechosConsensuados;
-
+    private List<Fuente> fuentes;
     public Coleccion(String titulo, String descripcion, CriterioDePertenencia criterio) {
         this.titulo = titulo;
         this.descripcion = descripcion;
@@ -27,6 +28,7 @@ public class Coleccion {
         this.hechos = new ArrayList<>();
         this.algoritmoDeConsenso = null;
         this.hechosConsensuados = new ArrayList<>();
+        this.fuentes = new ArrayList<>();
     }
 
     public void agregarHecho(Hecho hecho) {
@@ -44,4 +46,13 @@ public class Coleccion {
     public List<Hecho> getHechosCurados() {
         return this.hechosConsensuados;
     }
+
+    public void agregarFuente(Fuente fuente) {
+        this.fuentes.add(fuente);
+    }
+
+    public void quitarFuentePorId(Long idFuente) {
+        this.fuentes.removeIf(fuente -> fuente.getId().equals(idFuente));
+    }
+
 }

@@ -10,7 +10,7 @@ import lombok.Setter;
 
 public class FuenteContribuyente implements Fuente {
     private boolean esRegistrado; // flag de edicion! si escala se debe modificar!!
-
+    private Long id;
     public FuenteContribuyente(boolean esRegistrado) {
         this.esRegistrado = esRegistrado;
     }

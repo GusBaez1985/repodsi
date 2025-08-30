@@ -8,8 +8,8 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-//@RestController
-//@RequestMapping("/api/desastres")
+@RestController
+@RequestMapping("/api/desastres")
 public class ApiController {
     private final IApiService apiService;
 
@@ -18,12 +18,12 @@ public class ApiController {
     }
 
     @GetMapping
-    public Mono<List<DesastreDTO>> obtenerDesastresPorPagina(@RequestParam(defaultValue = "1") int page) {
+    public Mono<List<DesastreDTO>> obtenerDesastresPorPagina(@RequestParam(name = "page", defaultValue = "1") Integer page) {
         return apiService.obtenerDesastresPorPagina(page);
     }
 
     @GetMapping("/{id}")
-    public Mono<DesastreDTO> obtenerDesastrePorId(@PathVariable Long id){
+    public Mono<DesastreDTO> obtenerDesastrePorId(@PathVariable("id") Long id){
         return apiService.obtenerDesastrePorId(id);
-    };
+    }
 }

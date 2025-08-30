@@ -47,4 +47,6 @@ public class Contribuyente {
                 .filter(hecho -> filtros.stream()
                         .allMatch(filtro -> filtro.cumpleCriterio(hecho))).toList();
     }
+
+
 }
