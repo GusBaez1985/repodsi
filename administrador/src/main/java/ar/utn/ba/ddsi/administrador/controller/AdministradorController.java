@@ -24,12 +24,12 @@ public class AdministradorController {
 
     @PostMapping
     public ColeccionResponseDTO crearColeccion(@RequestBody ColeccionDTO dto) {
-        return ColeccionResponseDTO.from(administradorService.crearColeccion(dto));
+        return administradorService.crearColeccion(dto);
     }
 
     @PutMapping("/{id}")
     public ColeccionResponseDTO modificarColeccion(@PathVariable("id") Long id, @RequestBody ColeccionDTO dto) {
-        return ColeccionResponseDTO.from(administradorService.modificarColeccion(id, dto));
+        return administradorService.modificarColeccion(id, dto);
     }
 
     @DeleteMapping("/{id}")
@@ -40,15 +40,12 @@ public class AdministradorController {
 
     @GetMapping("/{id}/hechos")
     public List<HechoResponseDTO> obtenerHechos(@PathVariable("id") Long id) {
-        return administradorService.obtenerHechosDeColeccion(id)
-                .stream()
-                .map(HechoResponseDTO::from)
-                .toList();
+        return administradorService.obtenerHechosDeColeccion(id);
     }
 
     @PutMapping("/{id}/algoritmo")
     public ResponseEntity<String> cambiarAlgoritmo(
-            @PathVariable("id") Long id, // <-- SE AÑADE @PathVariable("id")
+            @PathVariable("id") Long id,
             @RequestBody ModificarAlgoritmoDTO dto
     ) {
         administradorService.modificarAlgoritmoDeConsenso(id, dto.getTipo());
@@ -62,10 +59,7 @@ public class AdministradorController {
     }
 
     @DeleteMapping("/{id}/fuentes/{idFuente}")
-    public ResponseEntity<String> quitarFuenteDeColeccion(
-            @PathVariable("id") Long id,               // <-- SE AÑADE @PathVariable("id")
-            @PathVariable("idFuente") Long idFuente    // <-- SE AÑADE @PathVariable("idFuente")
-    ) {
+    public ResponseEntity<String> quitarFuenteDeColeccion(@PathVariable("id") Long id, @PathVariable("idFuente") Long idFuente) {
         administradorService.quitarFuente(id, idFuente);
         return ResponseEntity.ok("Fuente quitada correctamente de la colección.");
     }

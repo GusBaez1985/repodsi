@@ -48,5 +48,14 @@ public class Contribuyente {
                         .allMatch(filtro -> filtro.cumpleCriterio(hecho))).toList();
     }
 
-
+    /**
+     * Crea una nueva solicitud de eliminación para un hecho específico.
+     * @param hecho El hecho que se desea eliminar.
+     * @param motivo La justificación para la eliminación.
+     * @return Un nuevo objeto SolicitudEliminacion en estado PENDIENTE.
+     */
+    public SolicitudEliminacion realizarSolicitudEliminacion(Hecho hecho, String motivo) {
+        // Se crea la solicitud usando el ID de este contribuyente (this.id)
+        return new SolicitudEliminacion(motivo, hecho.getId(), this.id);
+    }
 }

@@ -5,9 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(scanBasePackages = {
-		"ar.utn.ba.ddsi.agregador",
-		"ar.utn.ba.ddsi.consenso",
-		"ar.edu.utn.frba.dds.models.repositories"
+        "ar.utn.ba.ddsi.agregador", // <-- Esta línea ya incluye "agregador.controller"
+        "ar.utn.ba.ddsi.consenso",
+        "ar.edu.utn.frba.dds.models.repositories"
 })
 @EnableScheduling
 public class AgregadorApplication {

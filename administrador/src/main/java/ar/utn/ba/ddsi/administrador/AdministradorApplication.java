@@ -1,15 +1,11 @@
 package ar.utn.ba.ddsi.administrador;
 
-import ar.utn.ba.ddsi.administrador.agregador.models.repositories.IColeccionRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
 
+// Con solo @SpringBootApplication, Spring escaneará únicamente los paquetes
+// dentro de "ar.utn.ba.ddsi.administrador", que es el comportamiento correcto.
 @SpringBootApplication
-@ComponentScan(basePackages = {
-        "ar.utn.ba.ddsi.administrador",
-        "ar.utn.ba.ddsi.administrador.agregador"
-})
 public class AdministradorApplication {
 
     public static void main(String[] args) {

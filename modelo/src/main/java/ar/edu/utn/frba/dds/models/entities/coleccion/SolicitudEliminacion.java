@@ -27,4 +27,5 @@ public class SolicitudEliminacion {
         this.idContribuyente = idContribuyente;
         this.fechaCreacion = LocalDateTime.now();
     }
+
 }

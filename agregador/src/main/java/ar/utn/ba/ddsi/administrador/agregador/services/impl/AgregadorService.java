@@ -35,15 +35,15 @@ public class AgregadorService implements IAgregadorService {
 				.toList();
 	}
 
-	@Override
-	public void procesarSolicitudEliminacion(SolicitudEliminacion solicitud) {
-		/*
+    @Override
+    public void procesarSolicitudEliminacion(SolicitudEliminacion solicitud) {
+        /*
         if (detectorDeSpam.esSpam(solicitud)) {
-			solicitud.setEstadoSolicitud(EstadoSolicitud.RECHAZADA);
-			solicitud.getHecho().setEliminado(false);
-		} else {
-			solicitud.setEstadoSolicitud(EstadoSolicitud.APROBADA);
-			solicitud.getHecho().setEliminado(true);
-		}*/
-	}
+            solicitud.setEstadoSolicitud(EstadoSolicitud.RECHAZADA);
+            solicitud.getHecho().setEliminado(false);
+        } else {
+            solicitud.setEstadoSolicitud(EstadoSolicitud.APROBADA);
+            solicitud.getHecho().setEliminado(true);
+        }*/
+    }
 }

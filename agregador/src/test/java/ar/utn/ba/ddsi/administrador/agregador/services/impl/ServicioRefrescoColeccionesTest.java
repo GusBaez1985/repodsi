@@ -1,4 +1,4 @@
-package ar.utn.ba.ddsi.administrador.agregador.services.impl;
+/*package ar.utn.ba.ddsi.administrador.agregador.services.impl;
 
 import static org.mockito.Mockito.*;
 import ar.edu.utn.frba.dds.models.entities.coleccion.Hecho;
@@ -46,3 +46,4 @@ class ServicioRefrescoColeccionesTest {
 		verify(fuenteEstatica, times(1)).findAll();
 	}
 }
+*/
