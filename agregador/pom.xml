@@ -71,6 +71,12 @@
       <artifactId>junit-jupiter-api</artifactId>
       <scope>test</scope>
     </dependency>
+      <dependency>
+          <groupId>ar.utn.ba.ddsi</groupId>
+          <artifactId>administrador</artifactId>
+          <version>1.0-SNAPSHOT</version>
+          <scope>compile</scope>
+      </dependency>
   </dependencies>
 
   <build>

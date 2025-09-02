@@ -21,6 +21,12 @@ public class Coleccion {
     private AlgoritmoDeConsenso algoritmoDeConsenso; // puede ser null
     private List<Hecho> hechosConsensuados;
     private List<Fuente> fuentes;
+    public Coleccion() {
+        this.hechos = new ArrayList<>();
+        this.hechosConsensuados = new ArrayList<>();
+        this.fuentes = new ArrayList<>();
+    }
+
     public Coleccion(String titulo, String descripcion, CriterioDePertenencia criterio) {
         this.titulo = titulo;
         this.descripcion = descripcion;

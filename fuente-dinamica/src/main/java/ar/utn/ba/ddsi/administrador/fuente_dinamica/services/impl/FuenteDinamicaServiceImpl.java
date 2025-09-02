@@ -28,10 +28,10 @@ public class FuenteDinamicaServiceImpl implements IFuenteDinamicaService {
     }
 
     @Override
-    public void agregarHecho(Hecho hecho) {
+    public Hecho agregarHecho(Hecho hecho) {
         hechoRepository.save(hecho);
+        return hecho; // Añade esta línea
     }
-
     @Override
     public Hecho obtenerHechoPorId(Long id) {
         return hechoRepository.findById(id);

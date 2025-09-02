@@ -25,25 +25,31 @@ public class HechoController {
     private IFuenteDinamicaService fuenteService;
 
     @PostMapping
-    public String cargarHecho(@RequestBody HechoRequestDTO dto) {
+    public ResponseEntity<HechoResponseDTO> cargarHecho(@RequestBody HechoRequestDTO dto) {
         // Simula fuente registrada
-        FuenteContribuyente fuente = new FuenteContribuyente(false); // true = registrada fuente cambiar si requiere comportamiento
+        FuenteContribuyente fuente = new FuenteContribuyente(false);
 
         Hecho hecho = Hecho.of(
-            dto.titulo,
-            dto.descripcion,
-            null,
-            dto.categoria,
-            new Ubicacion(dto.latitud, dto.longitud),
-            LocalDate.parse(dto.fechaAcontecimiento),
-            fuente
+                dto.titulo,
+                dto.descripcion,
+                null, // TipoHecho es null por ahora
+                dto.categoria,
+                new Ubicacion(dto.latitud, dto.longitud),
+                LocalDate.parse(dto.fechaAcontecimiento),
+                fuente
         );
 
-        fuenteService.agregarHecho(hecho);
-        return "Hecho cargado con éxito";
+        // Se guarda el hecho y se recibe de vuelta (con su ID asignado)
+        Hecho hechoGuardado = fuenteService.agregarHecho(hecho);
+
+        // Se convierte el Hecho guardado a un DTO para la respuesta
+        HechoResponseDTO responseBody = HechoMapper.toDto(hechoGuardado);
+
+        // Se devuelve un código 201 (CREATED) y el objeto JSON en el cuerpo de la respuesta
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
 
-    // editamos camppos
+    // editamos campos
     @PutMapping("/{id}")
     public ResponseEntity<String> editarHecho(@PathVariable("id") Long id, @RequestBody HechoEdicionDTO dto) {
         try {
@@ -56,7 +62,6 @@ public class HechoController {
 
     @PutMapping("/{id}/revision")
     public ResponseEntity<String> revisarHecho(@PathVariable("id") Long id, @RequestBody HechoRevisionDTO dto) {
-
         try {
             fuenteService.revisarHecho(id, dto);
             return ResponseEntity.ok("Hecho revisado con estado: " + dto.getEstado());
@@ -64,7 +69,6 @@ public class HechoController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-
 
     // Probar si cargo ok el hecho
     @GetMapping

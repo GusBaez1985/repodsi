@@ -18,7 +18,7 @@ public class AdministradorService {
     // --- Métodos de Colecciones ---
 
     public List<ColeccionResponseDTO> obtenerTodasLasColecciones() {
-        String url = AGREGADOR_API_URL + "/colecciones";
+        String url = AGREGADOR_API_URL + "/api/colecciones";
         ColeccionResponseDTO[] respuesta = restTemplate.getForObject(url, ColeccionResponseDTO[].class);
         if (respuesta == null) {
             return Collections.emptyList(); // Devuelve lista vacía si no hay nada
@@ -27,26 +27,26 @@ public class AdministradorService {
     }
 
     public ColeccionResponseDTO crearColeccion(ColeccionDTO dto) {
-        String url = AGREGADOR_API_URL + "/colecciones";
+        String url = AGREGADOR_API_URL + "/api/colecciones";
         return restTemplate.postForObject(url, dto, ColeccionResponseDTO.class);
     }
 
     public ColeccionResponseDTO modificarColeccion(Long id, ColeccionDTO dto) {
-        String url = AGREGADOR_API_URL + "/colecciones/" + id;
+        String url = AGREGADOR_API_URL + "/api/colecciones/" + id;
         restTemplate.put(url, dto);
         // Hacemos un get para devolver el objeto actualizado, ya que PUT no devuelve contenido.
         return restTemplate.getForObject(url, ColeccionResponseDTO.class);
     }
 
     public void eliminarColeccion(Long id) {
-        String url = AGREGADOR_API_URL + "/colecciones/" + id;
+        String url = AGREGADOR_API_URL + "/api/colecciones/" + id;
         restTemplate.delete(url);
     }
 
     // --- Métodos de Hechos ---
 
     public List<HechoResponseDTO> obtenerHechosDeColeccion(Long idColeccion) {
-        String url = AGREGADOR_API_URL + "/colecciones/" + idColeccion + "/hechos";
+        String url = AGREGADOR_API_URL + "/api/colecciones/" + idColeccion + "/hechos";
         HechoResponseDTO[] respuesta = restTemplate.getForObject(url, HechoResponseDTO[].class);
         if (respuesta == null) {
             return Collections.emptyList();
@@ -57,19 +57,19 @@ public class AdministradorService {
     // --- Métodos de Algoritmos y Fuentes ---
 
     public void modificarAlgoritmoDeConsenso(Long idColeccion, String tipoAlgoritmo) {
-        String url = AGREGADOR_API_URL + "/colecciones/" + idColeccion + "/algoritmo";
+        String url = AGREGADOR_API_URL + "/api/colecciones/" + idColeccion + "/algoritmo";
         // Creamos el DTO que espera el endpoint del agregador
         ModificarAlgoritmoDTO body = new ModificarAlgoritmoDTO(tipoAlgoritmo);
         restTemplate.put(url, body);
     }
 
     public void agregarFuente(Long idColeccion, FuenteDTO dto) {
-        String url = AGREGADOR_API_URL + "/colecciones/" + idColeccion + "/fuentes";
+        String url = AGREGADOR_API_URL + "/api/colecciones/" + idColeccion + "/fuentes";
         restTemplate.postForObject(url, dto, Void.class);
     }
 
     public void quitarFuente(Long idColeccion, Long idFuente) {
-        String url = AGREGADOR_API_URL + "/colecciones/" + idColeccion + "/fuentes/" + idFuente;
+        String url = AGREGADOR_API_URL + "/api/colecciones/" + idColeccion + "/fuentes/" + idFuente;
         restTemplate.delete(url);
     }
 

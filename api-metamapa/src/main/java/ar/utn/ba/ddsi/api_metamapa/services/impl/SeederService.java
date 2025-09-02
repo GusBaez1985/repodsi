@@ -1,3 +1,30 @@
+
+
+package ar.utn.ba.ddsi.api_metamapa.services.impl;
+import ar.utn.ba.ddsi.api_metamapa.services.ISeederService;
+import jakarta.annotation.PostConstruct;
+import org.springframework.stereotype.Component;
+
+@Component
+public class SeederService implements ISeederService {
+
+    // El constructor ahora está vacío, ya no pide repositorios.
+    public SeederService() {
+    }
+
+    @Override
+    public void init() {
+        System.out.println("✅ Seeder ejecutado (sin carga de datos)");
+    }
+
+    @PostConstruct
+    public void runSeeder() {
+        this.init();
+    }
+}
+
+
+/* // COMENTAMOS TODO EL CÓDIGO ANTIGUO
 package ar.utn.ba.ddsi.api_metamapa.services.impl;
 
 import ar.edu.utn.frba.dds.models.entities.coleccion.Coleccion;
@@ -27,6 +54,7 @@ public class SeederService implements ISeederService {
 
     @Override
     public void init() {
+
         // Fuente y ubicación ficticia
         Fuente fuenteDummy = new FuenteCargaManual("Fuente");
         Ubicacion ubicacionDummy = new Ubicacion("40.7128", "-74.0060"); // Latitud y longitud de ejemplo
@@ -88,3 +116,4 @@ public class SeederService implements ISeederService {
         this.init();
     }
 }
+*/

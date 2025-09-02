@@ -1,14 +1,13 @@
 package ar.edu.utn.frba.dds.models.entities.coleccion;
 
 import ar.edu.utn.frba.dds.models.entities.fuente.Fuente;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Getter
 public class Hecho {

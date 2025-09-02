@@ -1,62 +1,87 @@
 package ar.utn.ba.ddsi.administrador.agregador.services.impl;
 
+import ar.edu.utn.frba.dds.models.entities.coleccion.Coleccion;
 import ar.edu.utn.frba.dds.models.entities.coleccion.Hecho;
+import ar.edu.utn.frba.dds.models.entities.coleccion.Ubicacion; // <-- Importante
+import ar.utn.ba.ddsi.administrador.agregador.dto.HechoFuenteDinamicaDTO; // <-- Importante
+import ar.utn.ba.ddsi.administrador.agregador.models.repositories.IColeccionRepository;
 import ar.utn.ba.ddsi.administrador.agregador.models.repositories.IHechoRepository;
 import ar.utn.ba.ddsi.administrador.agregador.services.IServicioRefrescoColecciones;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate; // <--- Importamos el cliente HTTP
+import org.springframework.web.client.RestTemplate;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ServicioRefrescoColecciones implements IServicioRefrescoColecciones {
 
-    // El repositorio CENTRAL de hechos, donde guardaremos todo lo que recolectemos.
     private final IHechoRepository hechoRepositoryCentral;
-    // El cliente HTTP para llamar a otros servicios.
+    private final IColeccionRepository coleccionRepository;
     private final RestTemplate restTemplate;
 
-    // Modificamos el constructor para que solo necesite el repositorio central.
-    public ServicioRefrescoColecciones(IHechoRepository hechoRepository) {
+    @Autowired
+    public ServicioRefrescoColecciones(IHechoRepository hechoRepository, IColeccionRepository coleccionRepository) {
         this.hechoRepositoryCentral = hechoRepository;
-        this.restTemplate = new RestTemplate(); // Creamos una instancia del cliente HTTP.
+        this.coleccionRepository = coleccionRepository;
+        this.restTemplate = new RestTemplate();
     }
 
     @PostConstruct
-    @Scheduled(cron = "0 */5 * * * *") // Cada 5 minutos
+    @Scheduled(cron = "0 */5 * * * *")
     public void refrescarColecciones() {
         System.out.println("--- [AGREGADOR] Iniciando proceso de refresco de fuentes ---");
         refrescarFuenteDinamica();
-        // Aquí podrías agregar llamadas para refrescar otras fuentes (proxy, estática, etc.)
     }
 
     private void refrescarFuenteDinamica() {
-        String urlFuenteDinamica = "http://localhost:8084/hechos"; // URL del servicio que expusimos en el Paso 1
+        String urlFuenteDinamica = "http://localhost:8084/hechos";
         try {
-            // 1. Hacemos la llamada HTTP GET para traer los hechos de la fuente dinámica.
-            Hecho[] hechosNuevos = restTemplate.getForObject(urlFuenteDinamica, Hecho[].class);
+            // 1. Usamos el DTO para recibir los datos tal como vienen
+            HechoFuenteDinamicaDTO[] hechosRecibidos = restTemplate.getForObject(urlFuenteDinamica, HechoFuenteDinamicaDTO[].class);
 
-            // 2. Si la respuesta no es nula y contiene hechos, los procesamos.
-            if (hechosNuevos != null && hechosNuevos.length > 0) {
-                // 3. Guardamos cada hecho nuevo en nuestro repositorio CENTRAL.
-                Arrays.stream(hechosNuevos).forEach(hechoRepositoryCentral::save);
-                System.out.println("--- [AGREGADOR] Se importaron " + hechosNuevos.length + " hechos desde la Fuente Dinámica.");
+            if (hechosRecibidos != null && hechosRecibidos.length > 0) {
+
+                // 2. Convertimos cada DTO a un objeto de dominio Hecho COMPLETO
+                List<Hecho> hechosNuevos = Arrays.stream(hechosRecibidos).map(dto ->
+                        Hecho.builder()
+                                .id(dto.getId())
+                                .titulo(dto.getTitulo())
+                                .descripcion(dto.getDescripcion())
+                                .categoria(dto.getCategoria())
+                                .ubicacion(new Ubicacion(dto.getLatitud(), dto.getLongitud())) // <-- Creamos el objeto Ubicacion
+                                .fecAcontecimiento(dto.getFechaAcontecimiento())
+                                .etiquetas(dto.getEtiquetas())
+                                .build()
+                ).collect(Collectors.toList());
+
+                // 3. Ahora trabajamos con la lista de Hechos completos y correctos
+                hechosNuevos.forEach(hechoRepositoryCentral::save);
+
+                List<Coleccion> coleccionesACtualizar = new ArrayList<>(coleccionRepository.findAll());
+
+                coleccionesACtualizar.forEach(coleccion -> {
+                    hechosNuevos.forEach(hecho -> {
+                        coleccion.agregarHecho(hecho);
+                        System.out.println("[AGREGADOR DEBUG] Hecho '" + hecho.getTitulo() + "' agregado a Colección ID " + coleccion.getId());
+                    });
+                    coleccionRepository.save(coleccion);
+                });
+
+                System.out.println("--- [AGREGADOR] Se importaron y asignaron " + hechosNuevos.size() + " hechos desde la Fuente Dinámica.");
             } else {
                 System.out.println("--- [AGREGADOR] No se encontraron hechos nuevos en la Fuente Dinámica.");
             }
         } catch (Exception e) {
-            System.err.println("--- [AGREGADOR] ERROR al contactar la Fuente Dinámica en " + urlFuenteDinamica + ": " + e.getMessage());
+            System.err.println("--- [AGREGADOR] ERROR durante el refresco de la Fuente Dinámica:");
+            e.printStackTrace();
         }
     }
 }
-
-
-
-
-
-
-
 
 /*package ar.utn.ba.ddsi.administrador.agregador.services.impl;
 

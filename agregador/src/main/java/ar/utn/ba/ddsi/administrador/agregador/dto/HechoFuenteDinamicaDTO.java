@@ -1,18 +1,19 @@
-package ar.utn.ba.ddsi.fuente_dinamica.dtos;
+package ar.utn.ba.ddsi.administrador.agregador.dto;
 
-import ar.edu.utn.frba.dds.models.entities.coleccion.TipoHecho;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
-public class HechoEdicionDTO {
+public class HechoFuenteDinamicaDTO {
+    private Long id;
     private String titulo;
     private String descripcion;
     private String categoria;
     private String latitud;
     private String longitud;
     private LocalDate fechaAcontecimiento;
+    private List<String> etiquetas;
 }

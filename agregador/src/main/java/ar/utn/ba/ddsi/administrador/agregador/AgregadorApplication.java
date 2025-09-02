@@ -4,15 +4,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication(scanBasePackages = {
-        "ar.utn.ba.ddsi.agregador", // <-- Esta línea ya incluye "agregador.controller"
-        "ar.utn.ba.ddsi.consenso",
-        "ar.edu.utn.frba.dds.models.repositories"
-})
+@SpringBootApplication // ¡Sin argumentos!
 @EnableScheduling
 public class AgregadorApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(AgregadorApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(AgregadorApplication.class, args);
+    }
 }
