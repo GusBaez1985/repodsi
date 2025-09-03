@@ -2,9 +2,11 @@ package ar.utn.ba.ddsi.administrador.agregador.controller;
 
 import ar.edu.utn.frba.dds.models.entities.coleccion.Coleccion;
 import ar.edu.utn.frba.dds.models.entities.coleccion.Hecho;
+import ar.edu.utn.frba.dds.models.entities.fuente.Fuente;
 import ar.utn.ba.ddsi.administrador.agregador.dto.ColeccionRequestDTO;
 import ar.utn.ba.ddsi.administrador.agregador.models.repositories.IColeccionRepository;
 import ar.utn.ba.ddsi.administrador.dto.FuenteDTO;
+import ar.utn.ba.ddsi.administrador.service.factory.FuenteFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,6 +56,28 @@ public class AgregadorController {
             return ResponseEntity.notFound().build();
         }
 
+        // Usamos la nueva clase Factory con el método correcto "crear"
+        Fuente nuevaFuente = FuenteFactory.crear(dto);
+
+        coleccion.agregarFuente(nuevaFuente);
+
+        // Guardamos la colección con su nueva fuente asociada
+        coleccionRepository.save(coleccion);
+
+        System.out.println("[AGREGADOR DEBUG] Fuente '" + dto.getNombre() + "' de tipo '" + dto.getTipo() + "' fue agregada y guardada en Colección ID " + id);
+
+        return ResponseEntity.ok().build();
+    }
+
+    /*
+    @PostMapping("/colecciones/{id}/fuentes")
+    public ResponseEntity<Void> agregarFuenteAColeccion(@PathVariable("id") Long id, @RequestBody FuenteDTO dto) {
+        Coleccion coleccion = coleccionRepository.findById(id);
+        if (coleccion == null) {
+            System.out.println("[AGREGADOR DEBUG] Colección no encontrada con ID: " + id);
+            return ResponseEntity.notFound().build();
+        }
+
 
 
         System.out.println("[AGREGADOR DEBUG] Se agregaría una fuente de tipo '" + dto.getTipo() + "' a la colección " + id);
@@ -62,7 +86,7 @@ public class AgregadorController {
 
         return ResponseEntity.ok().build();
     }
-
+    */
     @GetMapping("/colecciones/{id}/hechos")
     public ResponseEntity<List<Hecho>> obtenerHechosDeColeccion(@PathVariable("id") Long id) {
         Coleccion coleccion = coleccionRepository.findById(id);
