@@ -4,6 +4,8 @@ import ar.edu.utn.frba.dds.models.entities.coleccion.Coleccion;
 import ar.edu.utn.frba.dds.models.entities.coleccion.Hecho;
 import ar.edu.utn.frba.dds.models.entities.coleccion.Ubicacion; // <-- Importante
 import ar.edu.utn.frba.dds.models.entities.fuente.FuenteContribuyente;
+import ar.edu.utn.frba.dds.models.entities.fuente.FuenteDataset;
+import ar.edu.utn.frba.dds.models.entities.lectorCSV.LectorDeHechosCSV;
 import ar.utn.ba.ddsi.administrador.agregador.dto.HechoFuenteDinamicaDTO; // <-- Importante
 import ar.utn.ba.ddsi.administrador.agregador.models.repositories.IColeccionRepository;
 import ar.utn.ba.ddsi.administrador.agregador.models.repositories.IHechoRepository;
@@ -13,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.FileReader;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -64,7 +69,7 @@ public class ServicioRefrescoColecciones implements IServicioRefrescoColecciones
                                         .etiquetas(dto.getEtiquetas())
                                         .build()
                         ).filter(hecho -> hechoRepositoryCentral.findById(hecho.getId()).isEmpty())
-                        .collect(Collectors.toList());
+                        .toList();
 
                 if (!hechosParaAgregar.isEmpty()) {
                     hechosParaAgregar.forEach(hechoRepositoryCentral::save);
@@ -74,7 +79,7 @@ public class ServicioRefrescoColecciones implements IServicioRefrescoColecciones
                     List<Coleccion> coleccionesParaActualizar = coleccionRepository.findAll().stream()
                             .filter(coleccion -> coleccion.getFuentes().stream()
                                     .anyMatch(fuente -> fuente instanceof FuenteContribuyente))
-                            .collect(Collectors.toList());
+                            .toList();
 
                     coleccionesParaActualizar.forEach(coleccion -> {
                         hechosParaAgregar.forEach(coleccion::agregarHecho);
@@ -91,47 +96,43 @@ public class ServicioRefrescoColecciones implements IServicioRefrescoColecciones
             e.printStackTrace();
         }
     }
-}
-
-/*package ar.utn.ba.ddsi.administrador.agregador.services.impl;
-
-import ar.edu.utn.frba.dds.models.entities.coleccion.Hecho;
-import ar.edu.utn.frba.dds.models.repositories.IHechoRepository;
-import ar.utn.ba.ddsi.administrador.agregador.services.IServicioRefrescoColecciones;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-import java.util.List;
 
 
-@Service
-public class ServicioRefrescoColecciones implements IServicioRefrescoColecciones {
 
-    private final IHechoRepository fuenteDinamica;
-    private final IHechoRepository fuenteEstatica;
+    public void procesarFuenteEstatica(Coleccion coleccion, FuenteDataset fuenteDataset) {
+        System.out.println("[AGREGADOR] Iniciando procesamiento de Fuente Estática ID " + fuenteDataset.getId() + " para Colección ID " + coleccion.getId());
+        try {
+            String pathCompleto = Paths.get("agregador", "data", fuenteDataset.getPath()).toString();
 
-    public ServicioRefrescoColecciones(
-            @Qualifier("fuenteDinamica") IHechoRepository fuenteDinamica,
-            @Qualifier("fuenteEstatica") IHechoRepository fuenteEstatica) {
+            // --- INICIO DE CAMBIO ---
 
-        this.fuenteDinamica = fuenteDinamica;
-        this.fuenteEstatica = fuenteEstatica;
-    }
+            // 1. Creamos el FileReader que el constructor de LectorDeHechosCSV necesita.
+            FileReader fileReader = new FileReader(pathCompleto);
 
-    @PostConstruct
-    @Scheduled(cron = "0 0 * * * *") // cada una hora
-    public void refrescarColecciones() {
-        refrescarFuente(fuenteDinamica);
-        refrescarFuente(fuenteEstatica);
-    }
+            // 2. Ahora sí, creamos la instancia del lector pasándole el fileReader.
+            LectorDeHechosCSV lector = new LectorDeHechosCSV(fileReader);
 
-    private void refrescarFuente(IHechoRepository fuente) {
-        List<Hecho> hechos = fuente.findAll();
+            // 3. Llamamos al método obtenerHechos con los dos argumentos que requiere.
+            List<Hecho> hechosDelCsv = lector.obtenerHechos(pathCompleto, fuenteDataset);
 
-        hechos.forEach(fuente::save);
+            // --- FIN DE CAMBIO ---
 
-        System.out.println("Refrescada fuente: " + fuente.getClass().getSimpleName());
+            List<Hecho> hechosParaAgregar = hechosDelCsv.stream()
+                    .filter(hecho -> hechoRepositoryCentral.findById(hecho.getId()).isEmpty())
+                    .toList();
+
+            if (!hechosParaAgregar.isEmpty()) {
+                hechosParaAgregar.forEach(hechoRepositoryCentral::save);
+                hechosParaAgregar.forEach(coleccion::agregarHecho);
+                coleccionRepository.save(coleccion);
+                System.out.println("[AGREGADOR] Se importaron y asignaron " + hechosParaAgregar.size() + " hechos desde el CSV: " + fuenteDataset.getPath());
+            } else {
+                System.out.println("[AGREGADOR] No se encontraron hechos nuevos en el CSV o ya existían.");
+            }
+
+        } catch (Exception e) {
+            System.err.println("--- [AGREGADOR] ERROR procesando Fuente Estática: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
-*/

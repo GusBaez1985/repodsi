@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.models.entities.fuente;
 import ar.edu.utn.frba.dds.models.entities.coleccion.Hecho;
 import ar.edu.utn.frba.dds.models.entities.lectorCSV.LectorDeHechosCSV;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class FuenteDataset implements Fuente {
     private Long id; //
     private LectorDeHechosCSV lectorCSV;

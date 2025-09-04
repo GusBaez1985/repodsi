@@ -2,11 +2,13 @@ package ar.edu.utn.frba.dds.models.entities.fuente;
 
 import ar.edu.utn.frba.dds.models.entities.coleccion.Hecho;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 @Getter
 @Setter
+@NoArgsConstructor
 public class FuenteCargaManual implements Fuente {
     private Long id;
 

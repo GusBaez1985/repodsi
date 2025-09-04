@@ -63,4 +63,13 @@ public class AdministradorController {
         administradorService.quitarFuente(id, idFuente);
         return ResponseEntity.ok("Fuente quitada correctamente de la colección.");
     }
+
+
+    @PostMapping("/{idColeccion}/fuentes/{idFuente}/procesar")
+    public ResponseEntity<String> procesarFuente(
+            @PathVariable("idColeccion") Long idColeccion,
+            @PathVariable("idFuente") Long idFuente) {
+        administradorService.procesarFuenteDeColeccion(idColeccion, idFuente);
+        return ResponseEntity.ok("Solicitud de procesamiento de fuente enviada al agregador.");
+    }
 }
