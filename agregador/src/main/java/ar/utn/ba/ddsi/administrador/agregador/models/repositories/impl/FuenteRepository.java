@@ -15,10 +15,8 @@ import java.util.concurrent.atomic.AtomicLong; // <--- Importante
 public class FuenteRepository implements IFuenteRepository {
 
     private final List<Fuente> fuentes = new ArrayList<>();
-    // ===================== INICIO DE CAMBIO 1 =====================
     // Usamos un contador para simular el auto-incremento, igual que en ColeccionRepository
     private final AtomicLong sequence = new AtomicLong(0);
-    // ====================== FIN DE CAMBIO 1 =======================
 
     @Override
     public List<Fuente> findAll() {
@@ -27,7 +25,6 @@ public class FuenteRepository implements IFuenteRepository {
 
     @Override
     public void save(Fuente fuente) {
-        // ===================== INICIO DE CAMBIO 2 =====================
         if (fuente.getId() == null) {
             // Si es una fuente nueva, le asignamos un ID incremental
             fuente.setId(sequence.incrementAndGet());
@@ -37,7 +34,6 @@ public class FuenteRepository implements IFuenteRepository {
             this.fuentes.removeIf(f -> Objects.equals(f.getId(), fuente.getId()));
             this.fuentes.add(fuente);
         }
-        // ====================== FIN DE CAMBIO 2 =======================
     }
 
     @Override

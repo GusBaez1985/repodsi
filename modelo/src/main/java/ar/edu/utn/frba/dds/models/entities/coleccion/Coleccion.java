@@ -4,6 +4,8 @@ import ar.edu.utn.frba.dds.models.entities.fuente.Fuente;
 import ar.edu.utn.frba.dds.models.entities.interfaces.AlgoritmoDeConsenso;
 import ar.edu.utn.frba.dds.models.entities.criterios.CriterioDePertenencia;
 import ar.edu.utn.frba.dds.models.repositories.IHechoRepository;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +20,10 @@ public class Coleccion {
     private String descripcion;
     private CriterioDePertenencia criterio;
     private List<Hecho> hechos;
+    @JsonIgnore
     private AlgoritmoDeConsenso algoritmoDeConsenso; // puede ser null
+
+
     private List<Hecho> hechosConsensuados;
     private List<Fuente> fuentes;
     public Coleccion() {
@@ -59,6 +64,19 @@ public class Coleccion {
 
     public void quitarFuentePorId(Long idFuente) {
         this.fuentes.removeIf(fuente -> fuente.getId().equals(idFuente));
+    }
+    /**
+     * Este método es utilizado por Jackson durante la serialización a JSON.
+     * Devuelve el nombre simple de la clase del algoritmo, que coincide
+     * con el "tipoAlgoritmo" que esperan los DTOs.
+     * @return El nombre del tipo de algoritmo como un String.
+     */
+    @JsonProperty("tipoAlgoritmo")
+    public String getTipoAlgoritmoAsString() {
+        if (this.algoritmoDeConsenso == null) {
+            return null;
+        }
+        return this.algoritmoDeConsenso.getClass().getSimpleName();
     }
 
 }

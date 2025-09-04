@@ -47,11 +47,30 @@ public class AdministradorService {
 
     public List<HechoResponseDTO> obtenerHechosDeColeccion(Long idColeccion) {
         String url = AGREGADOR_API_URL + "/api/colecciones/" + idColeccion + "/hechos";
-        HechoResponseDTO[] respuesta = restTemplate.getForObject(url, HechoResponseDTO[].class);
+
+        // 1. Recibimos la respuesta del agregador en un DTO genérico (Object)
+        //    para evitar problemas de deserialización directa.
+        Object[] respuesta = restTemplate.getForObject(url, Object[].class);
+
         if (respuesta == null) {
             return Collections.emptyList();
         }
-        return Arrays.stream(respuesta).collect(Collectors.toList());
+
+        // 2. Mapeamos manualmente el resultado.
+        //    Esto nos da control total sobre la conversión y evita errores.
+        return Arrays.stream(respuesta)
+                .map(objetoHecho -> {
+                    // Convertimos el Object genérico a un mapa de clave-valor
+                    @SuppressWarnings("unchecked")
+                    java.util.Map<String, Object> mapaHecho = (java.util.Map<String, Object>) objetoHecho;
+
+                    // Extraemos solo el campo que nos interesa: "descripcion"
+                    String descripcion = (String) mapaHecho.get("descripcion");
+
+                    // Creamos el DTO que el administrador realmente necesita
+                    return new HechoResponseDTO(descripcion);
+                })
+                .collect(Collectors.toList());
     }
 
     // --- Métodos de Algoritmos y Fuentes ---
