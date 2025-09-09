@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.models.entities.coleccion;
 import ar.edu.utn.frba.dds.models.entities.fuente.Fuente;
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ public class Hecho {
     @Setter
     @ManyToOne
     @JoinColumn(name = "fuente_id")
+    @JsonIgnore
     private Fuente fuente;
 
     @Setter

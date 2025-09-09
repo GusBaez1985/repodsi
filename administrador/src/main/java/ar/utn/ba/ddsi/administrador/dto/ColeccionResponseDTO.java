@@ -20,14 +20,10 @@ public class ColeccionResponseDTO {
         dto.id = coleccion.getId();
         dto.titulo = coleccion.getTitulo();
         dto.descripcion = coleccion.getDescripcion();
-        dto.tipoAlgoritmo = coleccion.getAlgoritmoDeConsenso() == null
-                ? "ninguno"
-                : coleccion.getAlgoritmoDeConsenso().getClass().getSimpleName();
-
-        // --- AÑADIMOS LA LÓGICA PARA MAPEAR LAS FUENTES ---
+        dto.tipoAlgoritmo = coleccion.getTipoAlgoritmo();
         if (coleccion.getFuentes() != null) {
             dto.fuentes = coleccion.getFuentes().stream()
-                    .map(FuenteResponseDTO::from) // Necesitarás crear este DTO
+                    .map(FuenteResponseDTO::from)
                     .collect(Collectors.toList());
         }
         return dto;

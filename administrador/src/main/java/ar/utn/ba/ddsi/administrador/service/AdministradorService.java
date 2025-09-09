@@ -1,6 +1,8 @@
 package ar.utn.ba.ddsi.administrador.service;
 
+import ar.edu.utn.frba.dds.models.entities.coleccion.Coleccion;
 import ar.utn.ba.ddsi.administrador.dto.*;
+import ar.utn.ba.ddsi.administrador.service.factory.AlgoritmoDeConsensoFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.Arrays;
@@ -14,7 +16,6 @@ public class AdministradorService {
     private final RestTemplate restTemplate = new RestTemplate();
     // La URL base del servicio agregador (asumiendo que corre en el puerto 8081)
     private final String AGREGADOR_API_URL = "http://localhost:8081";
-    private final String urlAgregador = "http://localhost:8080/api";
     // --- Métodos de Colecciones ---
 
     public List<ColeccionResponseDTO> obtenerTodasLasColecciones() {
@@ -26,9 +27,21 @@ public class AdministradorService {
         return Arrays.stream(respuesta).collect(Collectors.toList());
     }
 
+
     public ColeccionResponseDTO crearColeccion(ColeccionDTO dto) {
+        Coleccion coleccion = new Coleccion();
+        coleccion.setTitulo(dto.getTitulo());
+        coleccion.setDescripcion(dto.getDescripcion());
+
+        coleccion.setTipoAlgoritmo(dto.getTipoAlgoritmo());
+
+        coleccion.setAlgoritmoDeConsenso(AlgoritmoDeConsensoFactory.crear(dto.getTipoAlgoritmo()));
+
+        // La URL correcta ya la tenías.
         String url = AGREGADOR_API_URL + "/api/colecciones";
-        return restTemplate.postForObject(url, dto, ColeccionResponseDTO.class);
+        Coleccion nuevaColeccion = restTemplate.postForObject(url, coleccion, Coleccion.class);
+
+        return ColeccionResponseDTO.from(nuevaColeccion);
     }
 
     public ColeccionResponseDTO modificarColeccion(Long id, ColeccionDTO dto) {
@@ -48,31 +61,14 @@ public class AdministradorService {
     public List<HechoResponseDTO> obtenerHechosDeColeccion(Long idColeccion) {
         String url = AGREGADOR_API_URL + "/api/colecciones/" + idColeccion + "/hechos";
 
-        // 1. Recibimos la respuesta del agregador en un DTO genérico (Object)
-        //    para evitar problemas de deserialización directa.
-        Object[] respuesta = restTemplate.getForObject(url, Object[].class);
+        // convertir la respuesta a un array de DTOs directamente y sin errores.
+        HechoResponseDTO[] respuesta = restTemplate.getForObject(url, HechoResponseDTO[].class);
 
         if (respuesta == null) {
             return Collections.emptyList();
         }
-
-        // 2. Mapeamos manualmente el resultado.
-        //    Esto nos da control total sobre la conversión y evita errores.
-        return Arrays.stream(respuesta)
-                .map(objetoHecho -> {
-                    // Convertimos el Object genérico a un mapa de clave-valor
-                    @SuppressWarnings("unchecked")
-                    java.util.Map<String, Object> mapaHecho = (java.util.Map<String, Object>) objetoHecho;
-
-                    // Extraemos solo el campo que nos interesa: "descripcion"
-                    String descripcion = (String) mapaHecho.get("descripcion");
-
-                    // Creamos el DTO que el administrador realmente necesita
-                    return new HechoResponseDTO(descripcion);
-                })
-                .collect(Collectors.toList());
+        return Arrays.asList(respuesta);
     }
-
     // --- Métodos de Algoritmos y Fuentes ---
 
     public void modificarAlgoritmoDeConsenso(Long idColeccion, String tipoAlgoritmo) {
@@ -116,7 +112,7 @@ public class AdministradorService {
     public List<SolicitudEliminacionDTO> obtenerSolicitudesDeEliminacion() {
         try {
             // Hacemos la llamada GET al endpoint del agregador
-            SolicitudEliminacionDTO[] solicitudes = restTemplate.getForObject(urlAgregador + "/solicitudes-eliminacion", SolicitudEliminacionDTO[].class);
+            SolicitudEliminacionDTO[] solicitudes = restTemplate.getForObject(AGREGADOR_API_URL + "/solicitudes-eliminacion", SolicitudEliminacionDTO[].class);
 
             // Convertimos el array a una lista y la devolvemos
             return solicitudes != null ? Arrays.asList(solicitudes) : Collections.emptyList();
@@ -127,3 +123,7 @@ public class AdministradorService {
         }
     }
 }
+
+
+
+

@@ -49,7 +49,6 @@ public class AgregadorController {
         this.solicitudRepository = solicitudRepository;
     }
 
-
     @GetMapping("/colecciones")
     public List<ColeccionResponseDTO> listarColecciones() {
         List<Coleccion> colecciones = coleccionRepository.findAll();
@@ -69,19 +68,21 @@ public class AgregadorController {
                 }
                 return new FuenteResponseDTO(fuente.getId(), tipo, nombre);
             }).collect(Collectors.toList());
-            String tipoAlgoritmo = coleccion.getAlgoritmoDeConsenso() != null ?
-                    coleccion.getAlgoritmoDeConsenso().getClass().getSimpleName() : null;
+
+            // Usamos el campo que SÍ se persiste y se carga desde la base de datos.
+            String tipoAlgoritmo = coleccion.getTipoAlgoritmo();
+
             return new ColeccionResponseDTO(
                     coleccion.getId(), coleccion.getTitulo(), coleccion.getDescripcion(), tipoAlgoritmo, fuentesDTO);
         }).collect(Collectors.toList());
     }
-
     @PostMapping("/colecciones")
     @ResponseStatus(HttpStatus.CREATED)
     public Coleccion crearColeccion(@RequestBody ColeccionRequestDTO dto) {
         Coleccion nuevaColeccion = new Coleccion(dto.getTitulo(), dto.getDescripcion(), null);
         AlgoritmoDeConsenso algoritmo = AlgoritmoDeConsensoFactory.crear(dto.getTipoAlgoritmo());
         nuevaColeccion.setAlgoritmoDeConsenso(algoritmo);
+        nuevaColeccion.setTipoAlgoritmo(dto.getTipoAlgoritmo());
         return coleccionRepository.save(nuevaColeccion);
     }
 

@@ -1,18 +1,27 @@
 package ar.utn.ba.ddsi.administrador.dto;
 
-import ar.edu.utn.frba.dds.models.entities.coleccion.Hecho;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import java.time.LocalDate;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
+@Setter
+@NoArgsConstructor
 public class HechoResponseDTO {
-    private final String descripcion;
+    private Long id;
+    private String titulo;
+    private String descripcion;
+    private String categoria;
+    private String latitud;
+    private String longitud;
+    private LocalDate fecAcontecimiento;
+    private LocalDate fecCarga;
+
 
     public HechoResponseDTO(String descripcion) {
         this.descripcion = descripcion;
     }
-
-    public static HechoResponseDTO from(Hecho hecho) {
-        return new HechoResponseDTO(hecho.getDescripcion());
-    }
 }
-

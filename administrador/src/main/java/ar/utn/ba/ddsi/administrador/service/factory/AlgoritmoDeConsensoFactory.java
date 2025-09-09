@@ -1,6 +1,8 @@
-package ar.utn.ba.ddsi.administrador.service.factory; // O donde prefieras ubicarla
+package ar.utn.ba.ddsi.administrador.service.factory;
 
-import algoritmosDeConsenso.*;
+import algoritmosDeConsenso.ConsensoAbsoluto;
+import algoritmosDeConsenso.ConsensoMayoriaSimple;
+import algoritmosDeConsenso.ConsensoMultiplesMenciones;
 import ar.edu.utn.frba.dds.models.entities.interfaces.AlgoritmoDeConsenso;
 
 public class AlgoritmoDeConsensoFactory {

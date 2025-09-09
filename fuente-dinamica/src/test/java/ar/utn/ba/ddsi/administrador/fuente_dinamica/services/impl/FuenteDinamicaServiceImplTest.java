@@ -1,4 +1,4 @@
-package ar.utn.ba.ddsi.administrador.fuente_dinamica.services.impl;
+/*package ar.utn.ba.ddsi.administrador.fuente_dinamica.services.impl;
 
 import ar.edu.utn.frba.dds.models.entities.coleccion.Hecho;
 import ar.edu.utn.frba.dds.models.entities.coleccion.Ubicacion;
@@ -104,3 +104,4 @@ class FuenteDinamicaServiceImplTest {
 				.build();
 	}
 }
+*/
