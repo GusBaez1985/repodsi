@@ -5,54 +5,57 @@ import ar.edu.utn.frba.dds.models.entities.coleccion.Ubicacion;
 import ar.edu.utn.frba.dds.models.entities.fuente.FuenteContribuyente;
 import ar.utn.ba.ddsi.administrador.fuente_dinamica.dtos.HechoEdicionDTO;
 import ar.utn.ba.ddsi.administrador.fuente_dinamica.dtos.HechoRevisionDTO;
-import ar.utn.ba.ddsi.administrador.fuente_dinamica.models.repositories.impl.HechoFuenteDinamicaRepository;
+import ar.utn.ba.ddsi.administrador.fuente_dinamica.repositories.IHechoRepository;
+import ar.utn.ba.ddsi.administrador.fuente_dinamica.repositories.IFuenteRepository;
 import ar.utn.ba.ddsi.administrador.fuente_dinamica.services.IFuenteDinamicaService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Transactional
 public class FuenteDinamicaServiceImpl implements IFuenteDinamicaService {
 
-    private final HechoFuenteDinamicaRepository hechoRepository;
+    private final IHechoRepository hechoRepository;
+    private final IFuenteRepository fuenteRepository;
 
-    // Usado por Spring normalmente
-    public FuenteDinamicaServiceImpl() {
-        this.hechoRepository = new HechoFuenteDinamicaRepository();
-    }
-
-    // Usado para test unitarios
-    public FuenteDinamicaServiceImpl(HechoFuenteDinamicaRepository repository) {
-        this.hechoRepository = repository;
+    public FuenteDinamicaServiceImpl(IHechoRepository hechoRepository, IFuenteRepository fuenteRepository) {
+        this.hechoRepository = hechoRepository;
+        this.fuenteRepository = fuenteRepository;
     }
 
     @Override
     public Hecho agregarHecho(Hecho hecho) {
-        hechoRepository.save(hecho);
-        return hecho; // Añade esta línea
+        FuenteContribuyente fuente = obtenerFuenteDeContribuyentes();
+        hecho.setFuente(fuente); // <-- Esto ahora compila gracias al cambio en Hecho.java
+        return hechoRepository.save(hecho);
     }
+
     @Override
     public Hecho obtenerHechoPorId(Long id) {
-        return hechoRepository.findById(id);
+        return hechoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Hecho no encontrado con id: " + id));
+    }
+
+    @Override
+    public List<Hecho> obtenerTodosLosHechos() {
+        return hechoRepository.findAll();
     }
 
     @Override
     public void editarHecho(Long id, HechoEdicionDTO dto) {
-        Hecho hechoExistente = hechoRepository.findById(id);
-        if (hechoExistente == null) {
-            throw new RuntimeException("Hecho no encontrado");
-        }
+        Hecho hechoExistente = obtenerHechoPorId(id);
 
         if (!(hechoExistente.getFuente() instanceof FuenteContribuyente fuente)) {
             throw new RuntimeException("Fuente no válida para edición");
         }
-
         if (!fuente.isEsRegistrado()) {
             throw new RuntimeException("Solo las fuentes registradas pueden editar hechos");
         }
-
-        if (!hechoExistente.getFecCarga().isAfter(LocalDate.now().minusDays(7))) {
+        if (hechoExistente.getFecCarga() == null || !hechoExistente.getFecCarga().isAfter(LocalDate.now().minusDays(7))) {
             throw new RuntimeException("Plazo de edición vencido");
         }
 
@@ -67,17 +70,24 @@ public class FuenteDinamicaServiceImpl implements IFuenteDinamicaService {
 
     @Override
     public void revisarHecho(Long id, HechoRevisionDTO dto) {
-        Hecho hecho = hechoRepository.findById(id);
-        if (hecho == null) {
-            throw new RuntimeException("Hecho no encontrado");
-        }
-
+        Hecho hecho = obtenerHechoPorId(id);
         hecho.setEstadoRevision(dto.getEstado());
         hechoRepository.save(hecho);
     }
 
-    @Override
-    public List<Hecho> obtenerTodosLosHechos() {
-        return hechoRepository.findAll();
+    private FuenteContribuyente obtenerFuenteDeContribuyentes() {
+        Optional<FuenteContribuyente> fuenteOpt = fuenteRepository.findAll()
+                .stream()
+                .filter(f -> f instanceof FuenteContribuyente)
+                .map(f -> (FuenteContribuyente) f)
+                .findFirst();
+
+        if (fuenteOpt.isPresent()) {
+            return fuenteOpt.get();
+        } else {
+            FuenteContribuyente nuevaFuente = new FuenteContribuyente();
+            // Ya no intentamos llamar a setNombre, porque no existe
+            return fuenteRepository.save(nuevaFuente);
+        }
     }
 }

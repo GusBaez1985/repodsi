@@ -4,6 +4,7 @@ import ar.edu.utn.frba.dds.models.entities.coleccion.Coleccion;
 import ar.edu.utn.frba.dds.models.entities.coleccion.EstadoSolicitud;
 import ar.edu.utn.frba.dds.models.entities.criterios.CriterioDePertenencia;
 import ar.edu.utn.frba.dds.models.entities.coleccion.SolicitudEliminacion;
+import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -11,8 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Entity
+@Table(name = "administrador")
 public class Administrador {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToMany(mappedBy = "administrador")
     private List<SolicitudEliminacion> listadoDeSolicitudes;
 
     public Administrador() {
@@ -33,7 +40,7 @@ public class Administrador {
         solicitudEliminacion.getHecho().setEliminado(true); */
 
         solicitudEliminacion.setEstadoSolicitud(EstadoSolicitud.APROBADA);
-        solicitudEliminacion.setIdAdministrador(this.id);
+        solicitudEliminacion.setAdministrador(this);
         solicitudEliminacion.setFechaResolucion(LocalDateTime.now());
     }
 
@@ -46,7 +53,7 @@ public class Administrador {
 
         solicitudEliminacion.getHecho().setEliminado(false); */
         solicitudEliminacion.setEstadoSolicitud(EstadoSolicitud.RECHAZADA);
-        solicitudEliminacion.setIdAdministrador(this.id);
+        solicitudEliminacion.setAdministrador(this);
         solicitudEliminacion.setFechaResolucion(LocalDateTime.now());
     }
 }

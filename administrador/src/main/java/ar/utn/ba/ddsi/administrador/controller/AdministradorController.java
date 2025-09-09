@@ -72,4 +72,10 @@ public class AdministradorController {
         administradorService.procesarFuenteDeColeccion(idColeccion, idFuente);
         return ResponseEntity.ok("Solicitud de procesamiento de fuente enviada al agregador.");
     }
+
+    @GetMapping("/solicitudes-eliminacion")
+    public ResponseEntity<List<SolicitudEliminacionDTO>> getSolicitudesDeEliminacion() {
+        List<SolicitudEliminacionDTO> solicitudes = administradorService.obtenerSolicitudesDeEliminacion();
+        return ResponseEntity.ok(solicitudes);
+    }
 }

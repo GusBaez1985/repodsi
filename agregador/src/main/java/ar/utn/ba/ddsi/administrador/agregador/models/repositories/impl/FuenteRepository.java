@@ -1,5 +1,4 @@
-// Archivo: FuenteRepository.java
-
+/*
 package ar.utn.ba.ddsi.administrador.agregador.models.repositories.impl;
 
 import ar.edu.utn.frba.dds.models.entities.fuente.Fuente;
@@ -27,7 +26,7 @@ public class FuenteRepository implements IFuenteRepository {
     public void save(Fuente fuente) {
         if (fuente.getId() == null) {
             // Si es una fuente nueva, le asignamos un ID incremental
-            fuente.setId(sequence.incrementAndGet());
+            //fuente.setId(sequence.incrementAndGet());
             this.fuentes.add(fuente);
         } else {
             // Si es una modificación, la reemplazamos
@@ -50,4 +49,4 @@ public class FuenteRepository implements IFuenteRepository {
             this.fuentes.removeIf(f -> Objects.equals(f.getId(), fuente.getId()));
         }
     }
-}
+}*/

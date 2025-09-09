@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.models.entities.fuente;
 
 import ar.edu.utn.frba.dds.models.entities.coleccion.Hecho;
 import ar.edu.utn.frba.dds.models.entities.lectorCSV.LectorDeHechosCSV;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,35 +13,22 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class FuenteDataset implements Fuente {
-    private Long id; //
+@Entity
+@DiscriminatorValue("dataset")
+public class FuenteDataset extends Fuente {
+    @Transient
     private LectorDeHechosCSV lectorCSV;
+    @Column(name = "path")
     private String path;
-    private List<Hecho> hechos;
 
     public FuenteDataset(LectorDeHechosCSV lectorCSV, String path) {
         this.lectorCSV = lectorCSV;
         this.path = path;
-        this.hechos = new ArrayList<>();
+        super.hechos = new ArrayList<>();
     }
 
     @Override
     public void importarHechos() {
-        this.hechos = lectorCSV.obtenerHechos(this.path, this);
-    }
-
-    @Override
-    public void agregarHecho(Hecho hecho) {
-        this.hechos.add(hecho);
-    }
-
-    @Override
-    public void eliminarHecho(Hecho hecho) {
-        // TODO
-    }
-
-    @Override
-    public List<Hecho> getHechos() {
-        return hechos;
+        super.hechos = lectorCSV.obtenerHechos(this.path, this);
     }
 }

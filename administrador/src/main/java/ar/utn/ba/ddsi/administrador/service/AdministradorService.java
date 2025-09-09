@@ -14,7 +14,7 @@ public class AdministradorService {
     private final RestTemplate restTemplate = new RestTemplate();
     // La URL base del servicio agregador (asumiendo que corre en el puerto 8081)
     private final String AGREGADOR_API_URL = "http://localhost:8081";
-
+    private final String urlAgregador = "http://localhost:8080/api";
     // --- Métodos de Colecciones ---
 
     public List<ColeccionResponseDTO> obtenerTodasLasColecciones() {
@@ -111,4 +111,19 @@ public class AdministradorService {
         restTemplate.postForObject(url, null, String.class);
     }
 
+
+
+    public List<SolicitudEliminacionDTO> obtenerSolicitudesDeEliminacion() {
+        try {
+            // Hacemos la llamada GET al endpoint del agregador
+            SolicitudEliminacionDTO[] solicitudes = restTemplate.getForObject(urlAgregador + "/solicitudes-eliminacion", SolicitudEliminacionDTO[].class);
+
+            // Convertimos el array a una lista y la devolvemos
+            return solicitudes != null ? Arrays.asList(solicitudes) : Collections.emptyList();
+        } catch (Exception e) {
+            // Manejo básico de errores: si el agregador no responde, devolvemos una lista vacía
+            System.err.println("Error al conectar con el agregador para obtener solicitudes: " + e.getMessage());
+            return Collections.emptyList();
+        }
+    }
 }

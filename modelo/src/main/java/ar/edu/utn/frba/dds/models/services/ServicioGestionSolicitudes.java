@@ -24,12 +24,12 @@ public class ServicioGestionSolicitudes {
         this.solicitudRepository = solicitudRepository;
     }
 
-    public SolicitudEliminacion crearYProcesarSolicitud(String motivo, Hecho hecho, Long id) {
-        if (id == null || hecho == null || motivo == null || motivo.trim().isEmpty()) {
+    public SolicitudEliminacion crearYProcesarSolicitud(String motivo, Hecho hecho, Contribuyente contribuyente) {
+        if (contribuyente.getId() == null || hecho == null || motivo == null || motivo.trim().isEmpty()) {
             throw new IllegalArgumentException("id, hecho y motivo no pueden ser nulos o vacíos.");
         }
 
-        SolicitudEliminacion nuevaSolicitud = new SolicitudEliminacion(motivo, hecho.getId(), id);
+        SolicitudEliminacion nuevaSolicitud = new SolicitudEliminacion(motivo, hecho, contribuyente);
         EstadoSolicitud estado = spamDetector.esSpam(nuevaSolicitud)
                 ? EstadoSolicitud.RECHAZADA
                 : EstadoSolicitud.SIN_REVISAR;

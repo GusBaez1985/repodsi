@@ -1,4 +1,4 @@
-package ar.utn.ba.ddsi.administrador.agregador.models.repositories.impl;
+/*package ar.utn.ba.ddsi.administrador.agregador.models.repositories.impl;
 import ar.edu.utn.frba.dds.models.entities.coleccion.SolicitudEliminacion;
 import ar.utn.ba.ddsi.administrador.agregador.models.repositories.ISolicitudEliminacionRepository;
 import org.springframework.stereotype.Repository;
@@ -31,3 +31,4 @@ public class SolicitudEliminacionRepository implements ISolicitudEliminacionRepo
 		this.solicitudes.remove(solicitud);
 	}
 }
+*/

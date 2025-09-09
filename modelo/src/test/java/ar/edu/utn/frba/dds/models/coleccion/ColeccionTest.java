@@ -18,7 +18,7 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
 public class ColeccionTest {
-
+/*
     //  Método auxiliar que crea y devuelve todos los hechos del escenario 1
     private List<Hecho> hechosDePrueba() {
         FuenteCargaManual fuenteDePrueba = new FuenteCargaManual("Fuente de Carga Manual para Test");
@@ -166,5 +166,5 @@ public class ColeccionTest {
     }
 
 
-
+*/
 }

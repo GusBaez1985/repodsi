@@ -20,6 +20,8 @@ public class ApiMetaMapaController {
         this.metaMapaService = metaMapaService;
     }
 
+
+
     @GetMapping("/hechos")
     Mono<List<HechoDTO>> obtenerHechos(@RequestParam Map<String, String> filtros){
         return metaMapaService.obtenerHechos(filtros);
@@ -39,7 +41,7 @@ public class ApiMetaMapaController {
         return metaMapaService.obtenerHechosPorColeccion(id, tipo);
     }
 
-    @PostMapping("/solicitudes")
+    @PostMapping("/solicitudes-eliminacion")
     Mono<Void> crearSolicitudEliminacion(@RequestBody SolicitudDTO solicitud){
         return metaMapaService.crearSolicitudEliminacion(solicitud);
     }

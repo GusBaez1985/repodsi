@@ -6,6 +6,7 @@ import ar.edu.utn.frba.dds.models.entities.criterios.CriterioDePertenencia;
 import ar.edu.utn.frba.dds.models.repositories.IHechoRepository;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,18 +15,52 @@ import java.util.List;
 
 @Getter
 @Setter
+@Entity
+@Table(name = "coleccion")
 public class Coleccion {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "titulo")
     private String titulo;
+
+    @Column(name = "descripcion", nullable = false, columnDefinition = "TEXT") // Le decimos a JPA que use un tipo de columna para texto largo
     private String descripcion;
+
+
+    @Transient
     private CriterioDePertenencia criterio;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "coleccion_hecho",
+            joinColumns = @JoinColumn(name = "coleccion_id"),
+            inverseJoinColumns = @JoinColumn(name = "hecho_id")
+    )
     private List<Hecho> hechos;
+
     @JsonIgnore
+    @Transient
     private AlgoritmoDeConsenso algoritmoDeConsenso; // puede ser null
 
-
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "coleccion_hecho_consensuado",
+            joinColumns = @JoinColumn(name = "coleccion_id"),
+            inverseJoinColumns = @JoinColumn(name = "hecho_id")
+    )
     private List<Hecho> hechosConsensuados;
+
+    // REVISAR @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "coleccion_fuente",
+            joinColumns = @JoinColumn(name = "coleccion_id"),
+            inverseJoinColumns = @JoinColumn(name = "fuente_id")
+    )
     private List<Fuente> fuentes;
+
     public Coleccion() {
         this.hechos = new ArrayList<>();
         this.hechosConsensuados = new ArrayList<>();

@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.services;
 
 import ar.edu.utn.frba.dds.models.entities.coleccion.*;
+import ar.edu.utn.frba.dds.models.entities.contribuyente.Contribuyente;
 import ar.edu.utn.frba.dds.models.entities.fuente.FuenteCargaManual;
 import ar.edu.utn.frba.dds.models.repositories.ISolicitudEliminacionRepository;
 import ar.edu.utn.frba.dds.models.services.ServicioGestionSolicitudes;
@@ -39,7 +40,7 @@ public class SpamTest {
                 LocalDate.of(2001, 11, 29),
                 new FuenteCargaManual("Fuente de Carga Manual para Test")
         );
-        SolicitudEliminacion solicitud = servicio.crearYProcesarSolicitud("¡Gana dinero rápido con esta promoción!", hecho, 1L);
+        SolicitudEliminacion solicitud = servicio.crearYProcesarSolicitud("¡Gana dinero rápido con esta promoción!", hecho, new Contribuyente());
 
         Assertions.assertEquals(EstadoSolicitud.RECHAZADA, solicitud.getEstadoSolicitud());
     }
@@ -55,7 +56,7 @@ public class SpamTest {
                 LocalDate.of(2001, 11, 29),
                 new FuenteCargaManual("Fuente de Carga Manual para Test")
         );
-        SolicitudEliminacion solicitud = servicio.crearYProcesarSolicitud("Considero que este hecho es inexacto", hecho, 2L);
+        SolicitudEliminacion solicitud = servicio.crearYProcesarSolicitud("Considero que este hecho es inexacto", hecho, new Contribuyente());
 
         assertEquals(EstadoSolicitud.SIN_REVISAR, solicitud.getEstadoSolicitud());
     }

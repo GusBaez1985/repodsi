@@ -4,6 +4,7 @@ import ar.edu.utn.frba.dds.models.entities.coleccion.Coleccion;
 import ar.edu.utn.frba.dds.models.entities.criterios.CriterioDePertenencia;
 import ar.edu.utn.frba.dds.models.entities.coleccion.Hecho;
 import ar.edu.utn.frba.dds.models.entities.coleccion.SolicitudEliminacion;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,10 +12,18 @@ import java.util.List;
 
 @Getter
 @Setter
+@Entity
+@Table(name = "contribuyente")
 public class Contribuyente {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "nombre")
     private String nombre;
+    @Column(name = "apellido")
     private String apellido;
+    @Column(name = "edad")
     private Integer edad;
 
     public Contribuyente() {
@@ -56,6 +65,6 @@ public class Contribuyente {
      */
     public SolicitudEliminacion realizarSolicitudEliminacion(Hecho hecho, String motivo) {
         // Se crea la solicitud usando el ID de este contribuyente (this.id)
-        return new SolicitudEliminacion(motivo, hecho.getId(), this.id);
+        return new SolicitudEliminacion(motivo, hecho, this);
     }
 }
