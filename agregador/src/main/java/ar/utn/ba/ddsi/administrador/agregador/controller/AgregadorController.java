@@ -10,6 +10,7 @@ import ar.edu.utn.frba.dds.models.entities.fuente.FuenteDataset;
 import ar.edu.utn.frba.dds.models.entities.interfaces.AlgoritmoDeConsenso;
 import ar.utn.ba.ddsi.administrador.agregador.dto.ColeccionRequestDTO;
 import ar.utn.ba.ddsi.administrador.agregador.dto.ColeccionResponseDTO;
+import ar.utn.ba.ddsi.administrador.agregador.dto.SolicitudRequestDTO;
 import ar.utn.ba.ddsi.administrador.agregador.models.repositories.ISolicitudEliminacionRepository;
 import ar.utn.ba.ddsi.administrador.agregador.services.ISolicitudEliminacionService;
 import ar.utn.ba.ddsi.administrador.service.factory.AlgoritmoDeConsensoFactory;
@@ -136,12 +137,18 @@ public class AgregadorController {
 
     @PostMapping("/solicitudes-eliminacion")
     @ResponseStatus(HttpStatus.CREATED)
-    public void crearSolicitud(@RequestBody SolicitudEliminacion solicitud) {
-        solicitudService.crearSolicitud(solicitud);
+    public void crearSolicitud(@RequestBody SolicitudRequestDTO dto) { // <-- CAMBIAR EL PARÁMETRO
+        solicitudService.crearSolicitud(dto);
     }
+
 
     @GetMapping("/solicitudes-eliminacion")
     public List<SolicitudEliminacion> listarSolicitudesDeEliminacion() {
         return solicitudRepository.findAll();
+    }
+
+    @GetMapping("/solicitudes-eliminacion/spam")
+    public List<SolicitudEliminacion> listarSolicitudesSpam() {
+        return solicitudService.obtenerSolicitudesSpam();
     }
 }

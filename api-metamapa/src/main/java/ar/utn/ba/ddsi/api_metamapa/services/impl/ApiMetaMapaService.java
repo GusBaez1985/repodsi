@@ -1,16 +1,17 @@
-
 package ar.utn.ba.ddsi.api_metamapa.services.impl;
 
 import ar.utn.ba.ddsi.api_metamapa.dto.HechoFuenteDinamicaDTO;
+import ar.utn.ba.ddsi.api_metamapa.dto.SolicitudAgregadorDTO;
 import ar.utn.ba.ddsi.fuente_proxy.models.dtos.input.ColeccionDTO;
 import ar.utn.ba.ddsi.fuente_proxy.models.dtos.input.HechoDTO;
 import ar.utn.ba.ddsi.fuente_proxy.models.dtos.input.SolicitudDTO;
 import ar.utn.ba.ddsi.fuente_proxy.models.entities.TipoNavegacion;
 import ar.utn.ba.ddsi.fuente_proxy.services.IMetaMapaService;
-import ar.edu.utn.frba.dds.models.entities.coleccion.Hecho; // <-- Importante para el array
+import ar.edu.utn.frba.dds.models.entities.coleccion.Hecho;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,27 +23,43 @@ import java.util.stream.Collectors;
 public class ApiMetaMapaService implements IMetaMapaService {
 
     private final RestTemplate restTemplate = new RestTemplate();
-    // La URL base ya incluye /api
     private final String AGREGADOR_API_URL = "http://localhost:8081/api";
 
     public ApiMetaMapaService() {}
 
-    // ... (otros métodos como obtenerColecciones y obtenerHechos) ...
+
+    @Override
+    public Mono<Void> crearSolicitudEliminacion(SolicitudDTO solicitud) {
+        return Mono.fromRunnable(() -> {
+            String url = AGREGADOR_API_URL + "/solicitudes-eliminacion";
+            System.out.println("Enviando solicitud a Agregador: " + url);
+            try {
+                // 1. Creamos el DTO plano que el agregador espera, usando los getters correctos.
+                SolicitudAgregadorDTO dtoParaAgregador = new SolicitudAgregadorDTO(
+                        solicitud.getMotivo(),
+                        solicitud.getIdHecho(), // <-- CORREGIDO
+                        solicitud.getIdContribuyente() // <-- CORREGIDO
+                );
+
+                // 2. Enviamos el DTO correcto.
+                restTemplate.postForObject(url, dtoParaAgregador, Void.class);
+                System.out.println("Solicitud enviada exitosamente al agregador.");
+            } catch (Exception e) {
+                System.err.println("Error al enviar la solicitud al agregador: " + e.getMessage());
+                throw new RuntimeException("Error al conectar con el servicio agregador", e);
+            }
+        }).subscribeOn(Schedulers.boundedElastic()).then();
+    }
+
 
     @Override
     public Mono<List<HechoDTO>> obtenerHechosPorColeccion(Long id, TipoNavegacion tipo) {
         return Mono.fromCallable(() -> {
-
             String url = AGREGADOR_API_URL + "/colecciones/" + id + "/hechos";
-
-            // El agregador devuelve objetos de dominio 'Hecho'
             Hecho[] hechosRecibidos = restTemplate.getForObject(url, Hecho[].class);
-
             if (hechosRecibidos == null) {
                 return Collections.emptyList();
             }
-
-            // Mapeamos de Hecho a HechoDTO para la respuesta final de MetaMapa
             return Arrays.stream(hechosRecibidos)
                     .map(hecho -> HechoDTO.toDTO(
                             hecho.getId(),
@@ -56,7 +73,6 @@ public class ApiMetaMapaService implements IMetaMapaService {
         });
     }
 
-
     @Override
     public Mono<List<HechoDTO>> obtenerHechos(Map<String, String> filtros) {
         return Mono.just(Collections.emptyList());
@@ -64,18 +80,9 @@ public class ApiMetaMapaService implements IMetaMapaService {
 
     @Override
     public Mono<List<ColeccionDTO>> obtenerColecciones() {
-        // Esta lógica aún necesita que el Agregador devuelva un objeto Coleccion compatible.
-        // Por ahora, para que arranque, la dejamos así.
         return Mono.just(Collections.emptyList());
     }
-
-    @Override
-    public Mono<Void> crearSolicitudEliminacion(SolicitudDTO solicitud) {
-        return Mono.empty();
-    }
 }
-
-
 
 /*
 
