@@ -72,8 +72,8 @@
     <module>fuente-proxy</module>
     <module>modelo</module>
     <module>api-metamapa</module>
-      <module>administrador</module>
-      <module>administrador</module>
+    <module>administrador</module>
+    <module>servicio-estadisticas</module>
   </modules>
   <build>
     <plugins>

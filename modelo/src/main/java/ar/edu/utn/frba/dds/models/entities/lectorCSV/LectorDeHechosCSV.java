@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -110,7 +111,7 @@ public class LectorDeHechosCSV {
                    // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-                    LocalDate fechaAcontecimiento = LocalDate.parse(fechaDelHecho.trim(), formatter);
+                    LocalDateTime fechaAcontecimiento = LocalDateTime.parse(fechaDelHecho.trim(), formatter);
 
                     Hecho hecho = Hecho.of(titulo, descripcion, TipoHecho.TEXTO, categoria, ubicacion, fechaAcontecimiento, fuente);
                     if (!hechoRepetido(hechos, hecho)) {

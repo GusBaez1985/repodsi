@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Builder
 @NoArgsConstructor
@@ -19,8 +20,8 @@ public class HechoDTO {
     private String categoria;
     private String latitud;
     private String longitud;
-    private LocalDate fecAcontecimiento;
-    private LocalDate fecCarga;
+    private LocalDateTime fecAcontecimiento;
+    private LocalDateTime fecCarga;
 
     public static HechoDTO toDTO(Long id, String titulo, String descripcion, String categoria, String latitud, String longitud) {
         return HechoDTO
@@ -31,8 +32,8 @@ public class HechoDTO {
                 .categoria(categoria)
                 .latitud(latitud)
                 .longitud(longitud)
-                .fecAcontecimiento(LocalDate.now())
-                .fecCarga(LocalDate.now())
+                .fecAcontecimiento(LocalDateTime.now())
+                .fecCarga(LocalDateTime.now())
                 .build();
     }
 }

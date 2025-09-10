@@ -1,77 +1,69 @@
 package ar.utn.ba.ddsi.api_metamapa.services.impl;
 
-import ar.utn.ba.ddsi.api_metamapa.dto.HechoFuenteDinamicaDTO;
 import ar.utn.ba.ddsi.api_metamapa.dto.SolicitudAgregadorDTO;
 import ar.utn.ba.ddsi.fuente_proxy.models.dtos.input.ColeccionDTO;
 import ar.utn.ba.ddsi.fuente_proxy.models.dtos.input.HechoDTO;
 import ar.utn.ba.ddsi.fuente_proxy.models.dtos.input.SolicitudDTO;
 import ar.utn.ba.ddsi.fuente_proxy.models.entities.TipoNavegacion;
 import ar.utn.ba.ddsi.fuente_proxy.services.IMetaMapaService;
-import ar.edu.utn.frba.dds.models.entities.coleccion.Hecho;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
-import java.util.Arrays;
+
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.client.WebClient;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
 
 @Service
 public class ApiMetaMapaService implements IMetaMapaService {
-
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final WebClient webClient;
     private final String AGREGADOR_API_URL = "http://localhost:8081/api";
 
-    public ApiMetaMapaService() {}
-
+    public ApiMetaMapaService(WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder.baseUrl(AGREGADOR_API_URL).build();
+    }
 
     @Override
     public Mono<Void> crearSolicitudEliminacion(SolicitudDTO solicitud) {
-        return Mono.fromRunnable(() -> {
-            String url = AGREGADOR_API_URL + "/solicitudes-eliminacion";
-            System.out.println("Enviando solicitud a Agregador: " + url);
-            try {
-                // 1. Creamos el DTO plano que el agregador espera, usando los getters correctos.
-                SolicitudAgregadorDTO dtoParaAgregador = new SolicitudAgregadorDTO(
-                        solicitud.getMotivo(),
-                        solicitud.getIdHecho(), // <-- CORREGIDO
-                        solicitud.getIdContribuyente() // <-- CORREGIDO
-                );
+        System.out.println("Enviando solicitud a Agregador (vía WebClient)...");
+        SolicitudAgregadorDTO dtoParaAgregador = new SolicitudAgregadorDTO(
+                solicitud.getMotivo(),
+                solicitud.getIdHecho(),
+                solicitud.getIdContribuyente()
+        );
 
-                // 2. Enviamos el DTO correcto.
-                restTemplate.postForObject(url, dtoParaAgregador, Void.class);
-                System.out.println("Solicitud enviada exitosamente al agregador.");
-            } catch (Exception e) {
-                System.err.println("Error al enviar la solicitud al agregador: " + e.getMessage());
-                throw new RuntimeException("Error al conectar con el servicio agregador", e);
-            }
-        }).subscribeOn(Schedulers.boundedElastic()).then();
+        return this.webClient.post()
+                .uri("/solicitudes-eliminacion")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(dtoParaAgregador)
+                .retrieve()
+                // Le decimos a WebClient qué hacer si la respuesta es un error (4xx o 5xx)
+                .onStatus(HttpStatusCode::isError, response ->
+                        response.bodyToMono(String.class) // Obtenemos el cuerpo del error como texto
+                                .flatMap(errorBody -> {
+                                    System.err.println("Error desde Agregador: " + errorBody);
+                                    // Creamos y retornamos una excepción clara
+                                    return Mono.error(new ResponseStatusException(response.statusCode(), "Error al procesar la solicitud en el Agregador: " + errorBody));
+                                })
+                )
+                .toBodilessEntity()
+                .then();
     }
-
-
     @Override
     public Mono<List<HechoDTO>> obtenerHechosPorColeccion(Long id, TipoNavegacion tipo) {
-        return Mono.fromCallable(() -> {
-            String url = AGREGADOR_API_URL + "/colecciones/" + id + "/hechos";
-            Hecho[] hechosRecibidos = restTemplate.getForObject(url, Hecho[].class);
-            if (hechosRecibidos == null) {
-                return Collections.emptyList();
-            }
-            return Arrays.stream(hechosRecibidos)
-                    .map(hecho -> HechoDTO.toDTO(
-                            hecho.getId(),
-                            hecho.getTitulo(),
-                            hecho.getDescripcion(),
-                            hecho.getCategoria(),
-                            hecho.getUbicacion().getLatitud(),
-                            hecho.getUbicacion().getLongitud()
-                    ))
-                    .collect(Collectors.toList());
-        });
+        return this.webClient.get()
+                .uri("/colecciones/{id}/hechos?navegacion={tipo}", id, tipo.name())
+                .retrieve()
+                .bodyToFlux(HechoDTO.class)
+                .collectList();
     }
+
+
 
     @Override
     public Mono<List<HechoDTO>> obtenerHechos(Map<String, String> filtros) {

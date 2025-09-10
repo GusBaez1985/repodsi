@@ -55,7 +55,7 @@ public class FuenteDinamicaServiceImpl implements IFuenteDinamicaService {
         if (!fuente.isEsRegistrado()) {
             throw new RuntimeException("Solo las fuentes registradas pueden editar hechos");
         }
-        if (hechoExistente.getFecCarga() == null || !hechoExistente.getFecCarga().isAfter(LocalDate.now().minusDays(7))) {
+        if (hechoExistente.getFecCarga() == null || !hechoExistente.getFecCarga().isAfter(LocalDate.now().minusDays(7).atStartOfDay())) {
             throw new RuntimeException("Plazo de edición vencido");
         }
 

@@ -25,22 +25,22 @@ public class HechoFilter {
 
         if (filtros.containsKey("fecha_reporte_desde")) {
             LocalDate desde = LocalDate.parse(filtros.get("fecha_reporte_desde"), formatter);
-            stream = stream.filter(h -> h.getFecCarga() != null && !h.getFecCarga().isBefore(desde));
+            stream = stream.filter(h -> h.getFecCarga() != null && !h.getFecCarga().isBefore(desde.atStartOfDay()));
         }
 
         if (filtros.containsKey("fecha_reporte_hasta")) {
             LocalDate hasta = LocalDate.parse(filtros.get("fecha_reporte_hasta"), formatter);
-            stream = stream.filter(h -> h.getFecCarga() != null && !h.getFecCarga().isAfter(hasta));
+            stream = stream.filter(h -> h.getFecCarga() != null && !h.getFecCarga().isAfter(hasta.atStartOfDay()));
         }
 
         if (filtros.containsKey("fecha_acontecimiento_desde")) {
             LocalDate desde = LocalDate.parse(filtros.get("fecha_acontecimiento_desde"), formatter);
-            stream = stream.filter(h -> h.getFecAcontecimiento() != null && !h.getFecAcontecimiento().isBefore(desde));
+            stream = stream.filter(h -> h.getFecAcontecimiento() != null && !h.getFecAcontecimiento().isBefore(desde.atStartOfDay()));
         }
 
         if (filtros.containsKey("fecha_acontecimiento_hasta")) {
             LocalDate hasta = LocalDate.parse(filtros.get("fecha_acontecimiento_hasta"), formatter);
-            stream = stream.filter(h -> h.getFecAcontecimiento() != null && !h.getFecAcontecimiento().isAfter(hasta));
+            stream = stream.filter(h -> h.getFecAcontecimiento() != null && !h.getFecAcontecimiento().isAfter(hasta.atStartOfDay()));
         }
 
         if (filtros.containsKey("ubicacion")) {

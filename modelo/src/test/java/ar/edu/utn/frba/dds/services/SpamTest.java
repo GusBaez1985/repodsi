@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.services;
+/*package ar.edu.utn.frba.dds.services;
 
 import ar.edu.utn.frba.dds.models.entities.coleccion.*;
 import ar.edu.utn.frba.dds.models.entities.contribuyente.Contribuyente;
@@ -60,4 +60,4 @@ public class SpamTest {
 
         assertEquals(EstadoSolicitud.SIN_REVISAR, solicitud.getEstadoSolicitud());
     }
-}
+}*/

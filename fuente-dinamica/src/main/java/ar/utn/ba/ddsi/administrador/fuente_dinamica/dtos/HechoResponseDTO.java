@@ -1,6 +1,7 @@
 package ar.utn.ba.ddsi.administrador.fuente_dinamica.dtos;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class HechoResponseDTO {
@@ -10,7 +11,7 @@ public class HechoResponseDTO {
     public String categoria;
     public String latitud;
     public String longitud;
-    public LocalDate fechaAcontecimiento;
+    public LocalDateTime fechaAcontecimiento;
     public List<String> etiquetas;
 
     public HechoResponseDTO() {}

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -35,7 +36,7 @@ public class HechoController {
                 null, // TipoHecho es null por ahora
                 dto.categoria,
                 new Ubicacion(dto.latitud, dto.longitud),
-                LocalDate.parse(dto.fechaAcontecimiento),
+                LocalDateTime.parse(dto.fechaAcontecimiento),
                 fuente
         );
 

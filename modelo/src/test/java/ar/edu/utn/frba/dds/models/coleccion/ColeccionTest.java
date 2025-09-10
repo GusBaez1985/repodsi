@@ -12,6 +12,7 @@ import ar.edu.utn.frba.dds.models.entities.fuente.FuenteCargaManual;
 import org.testng.annotations.Test;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.testng.AssertJUnit.assertEquals;
@@ -22,14 +23,13 @@ public class ColeccionTest {
     //  Método auxiliar que crea y devuelve todos los hechos del escenario 1
     private List<Hecho> hechosDePrueba() {
         FuenteCargaManual fuenteDePrueba = new FuenteCargaManual("Fuente de Carga Manual para Test");
-        fuenteDePrueba.setId(1L); // Le asignamos un ID de prueba.
         Hecho hecho1 = Hecho.of(
                 "Caída de aeronave impacta en Olavarría",
                 "Grave caída de aeronave ocurrió en las inmediaciones de Olavarría, Buenos Aires. El incidente provocó pánico entre los residentes locales. Voluntarios de diversas organizaciones se han sumado a las tareas de auxilio.",
                 TipoHecho.TEXTO,
                 "Caída de aeronave",
                 new Ubicacion("-36.868375", "-60.343297"),
-                LocalDate.of(2001, 11, 29),
+                LocalDateTime.now(),
                 fuenteDePrueba
 
         );
@@ -40,7 +40,7 @@ public class ColeccionTest {
                 TipoHecho.TEXTO,
                 "Accidente con maquinaria industrial",
                 new Ubicacion("-37.345571", "-70.241485"),
-                LocalDate.of(2001, 8, 16),
+                LocalDateTime.now(),
                 fuenteDePrueba
         );
 
@@ -50,7 +50,7 @@ public class ColeccionTest {
                 TipoHecho.TEXTO,
                 "Caída de aeronave",
                 new Ubicacion("-33.768051", "-61.921032"),
-                LocalDate.of(2008, 8, 8),
+                LocalDateTime.now(),
                 fuenteDePrueba
         );
 
@@ -60,7 +60,7 @@ public class ColeccionTest {
                 TipoHecho.TEXTO,
                 "Accidente en paso a nivel",
                 new Ubicacion("-35.855811", "-61.940589"),
-                LocalDate.of(2020, 1, 27),
+                LocalDateTime.now(),
                 fuenteDePrueba
         );
 
@@ -70,7 +70,7 @@ public class ColeccionTest {
                 TipoHecho.TEXTO,
                 "Derrumbe en obra en construcción",
                 new Ubicacion("-26.780008", "-60.458782"),
-                LocalDate.of(2016, 6, 4),
+                LocalDateTime.now(),
                 fuenteDePrueba
         );
 
@@ -91,8 +91,8 @@ public class ColeccionTest {
     public void aplicarCriterioFecha() {
         List<Hecho> hechos = hechosDePrueba();
         CriterioDePertenencia criterio = new CriterioFechaEntre(
-                LocalDate.of(2000, 1, 1),
-                LocalDate.of(2010, 1, 1)
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
 
         Coleccion coleccion = new Coleccion("Con criterio fecha", "Filtro por fecha", criterio);
@@ -112,8 +112,8 @@ public class ColeccionTest {
 
         // Primero filtro por fecha como en el test anterior
         CriterioDePertenencia criterioFecha = new CriterioFechaEntre(
-                LocalDate.of(2000, 1, 1),
-                LocalDate.of(2010, 1, 1)
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
         List<Hecho> filtradosPorFecha = hechos.stream()
                 .filter(h -> criterioFecha.cumpleCriterio(h))

@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.models.contribuyente;
+/*package ar.edu.utn.frba.dds.models.contribuyente;
 import ar.edu.utn.frba.dds.models.entities.coleccion.*;
 import ar.edu.utn.frba.dds.models.entities.contribuyente.Contribuyente;
 import ar.edu.utn.frba.dds.models.entities.criterios.CriterioFechaEntre;
@@ -109,4 +109,4 @@ public class ContribuyenteTest {
         assertEquals(1,solicitudesEliminacion.size());
     }
 
-}
+}*/

@@ -3,12 +3,13 @@ package ar.edu.utn.frba.dds.models.entities.criterios;
 import ar.edu.utn.frba.dds.models.entities.coleccion.Hecho;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class CriterioFechaEntre implements CriterioDePertenencia{
-    private LocalDate desde;
-    private LocalDate hasta;
+    private LocalDateTime desde;
+    private LocalDateTime hasta;
 
-    public CriterioFechaEntre(LocalDate desde, LocalDate hasta) {
+    public CriterioFechaEntre(LocalDateTime desde, LocalDateTime hasta) {
         this.desde = desde;
         this.hasta = hasta;
     }

@@ -5,6 +5,7 @@ import ar.edu.utn.frba.dds.models.entities.coleccion.Hecho;
 import ar.edu.utn.frba.dds.models.entities.coleccion.SolicitudEliminacion;
 import ar.edu.utn.frba.dds.models.entities.contribuyente.Contribuyente;
 import ar.edu.utn.frba.dds.models.services.spam.SpamDetector;
+import ar.utn.ba.ddsi.administrador.agregador.dto.EstadisticasSpamDTO;
 import ar.utn.ba.ddsi.administrador.agregador.dto.SolicitudRequestDTO;
 import ar.utn.ba.ddsi.administrador.agregador.models.repositories.IContribuyenteRepository;
 import ar.utn.ba.ddsi.administrador.agregador.models.repositories.IHechoRepository;
@@ -18,13 +19,13 @@ import java.util.stream.Collectors;
 public class SolicitudEliminacionService implements ISolicitudEliminacionService {
 
     private final IHechoRepository hechoRepository;
-    private final ISolicitudEliminacionRepository solicitudRepository;
+    private final ISolicitudEliminacionRepository solicitudRepository; // <-- Tu nombre de variable
     private final IContribuyenteRepository contribuyenteRepository;
     private final SpamDetector spamDetector;
 
     public SolicitudEliminacionService(IHechoRepository hechoRepository, ISolicitudEliminacionRepository solicitudRepository, IContribuyenteRepository contribuyenteRepository) {
         this.hechoRepository = hechoRepository;
-        this.solicitudRepository = solicitudRepository;
+        this.solicitudRepository = solicitudRepository; // <-- Tu nombre de variable
         this.contribuyenteRepository = contribuyenteRepository;
         this.spamDetector = new SpamDetector();
     }
@@ -50,7 +51,6 @@ public class SolicitudEliminacionService implements ISolicitudEliminacionService
 
     @Override
     public void aprobarSolicitudEliminacion(SolicitudEliminacion solicitudEliminacion) {
-        // La lógica para aprobar no cambia
         Long idDelHechoAEliminar = solicitudEliminacion.getHecho().getId();
         Hecho hechoAEliminar = this.hechoRepository.findById(idDelHechoAEliminar)
                 .orElseThrow(() -> new IllegalStateException("El hecho a eliminar no fue encontrado con ID: " + idDelHechoAEliminar));
@@ -67,7 +67,6 @@ public class SolicitudEliminacionService implements ISolicitudEliminacionService
 
     @Override
     public void rechazarSolicitudEliminacion(SolicitudEliminacion solicitudEliminacion) {
-        // La lógica para rechazar no cambia
         solicitudEliminacion.setEstadoSolicitud(EstadoSolicitud.RECHAZADA);
         this.solicitudRepository.save(solicitudEliminacion);
     }
@@ -77,5 +76,16 @@ public class SolicitudEliminacionService implements ISolicitudEliminacionService
         return solicitudRepository.findAll().stream()
                 .filter(spamDetector::esSpam)
                 .collect(Collectors.toList());
+    }
+
+    // El método de estadísticas ahora usa el nombre de variable correcto
+    @Override
+    public EstadisticasSpamDTO obtenerEstadisticasSpam() {
+        long total = solicitudRepository.count();
+        long rechazadas = solicitudRepository.countByEstadoSolicitud(EstadoSolicitud.RECHAZADA);
+        long sinRevisar = solicitudRepository.countByEstadoSolicitud(EstadoSolicitud.SIN_REVISAR);
+        long aprobadas = solicitudRepository.countByEstadoSolicitud(EstadoSolicitud.APROBADA);
+
+        return new EstadisticasSpamDTO(total, rechazadas, sinRevisar, aprobadas);
     }
 }

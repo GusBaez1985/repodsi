@@ -6,6 +6,7 @@ import lombok.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 @NoArgsConstructor
@@ -41,10 +42,10 @@ public class Hecho {
 
     @Setter
     @Column(name = "fecha_acontecimiento", nullable = false)
-    private LocalDate fecAcontecimiento;
+    private LocalDateTime fecAcontecimiento;
 
     @Column(name = "fecha_carga", nullable = false)
-    private LocalDate fecCarga;
+    private LocalDateTime fecCarga;
 
     @Setter
     @ManyToOne
@@ -65,7 +66,7 @@ public class Hecho {
     @Enumerated(EnumType.STRING)
     private EstadoRevision estadoRevision;
 
-    public static Hecho of(String titulo, String descripcion, TipoHecho tipoHecho, String categoria, Ubicacion ubicacion, LocalDate fecAcontecimiento, Fuente fuente) {
+    public static Hecho of(String titulo, String descripcion, TipoHecho tipoHecho, String categoria, Ubicacion ubicacion, LocalDateTime fecAcontecimiento, Fuente fuente) {
         return Hecho
                 .builder()
                 .titulo(titulo)
@@ -74,7 +75,7 @@ public class Hecho {
                 .categoria(categoria)
                 .ubicacion(ubicacion)
                 .fecAcontecimiento(fecAcontecimiento)
-                .fecCarga(LocalDate.now())
+                .fecCarga(LocalDateTime.now())
                 .fuente(fuente)
                 .eliminado(false)
                 .etiquetas(new ArrayList<>())

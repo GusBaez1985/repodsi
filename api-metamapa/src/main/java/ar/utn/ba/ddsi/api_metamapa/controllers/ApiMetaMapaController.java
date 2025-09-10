@@ -7,9 +7,11 @@ import ar.utn.ba.ddsi.fuente_proxy.models.entities.TipoNavegacion;
 import ar.utn.ba.ddsi.fuente_proxy.services.IMetaMapaService;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
+
+
 
 @RestController
 @RequestMapping("/metamapa")
@@ -19,8 +21,6 @@ public class ApiMetaMapaController {
     public ApiMetaMapaController(IMetaMapaService metaMapaService) {
         this.metaMapaService = metaMapaService;
     }
-
-
 
     @GetMapping("/hechos")
     Mono<List<HechoDTO>> obtenerHechos(@RequestParam Map<String, String> filtros){
@@ -36,14 +36,14 @@ public class ApiMetaMapaController {
     public Mono<List<HechoDTO>> obtenerHechosPorColeccion(
             @PathVariable("id") Long id,
             @RequestParam(name = "navegacion", defaultValue = "CURADA") String navegacion) {
-
         TipoNavegacion tipo = TipoNavegacion.valueOf(navegacion.toUpperCase());
         return metaMapaService.obtenerHechosPorColeccion(id, tipo);
     }
 
     @PostMapping("/solicitudes-eliminacion")
-    Mono<Void> crearSolicitudEliminacion(@RequestBody SolicitudDTO solicitud){
+    public Mono<Void> crearSolicitudEliminacion(@RequestBody SolicitudDTO solicitud){
         return metaMapaService.crearSolicitudEliminacion(solicitud);
     }
 }
+
 

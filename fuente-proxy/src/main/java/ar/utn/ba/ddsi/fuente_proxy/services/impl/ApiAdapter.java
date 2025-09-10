@@ -32,7 +32,7 @@ public class ApiAdapter implements IAdapterAPI {
                 TipoHecho.TEXTO,
                 dto.getCategoria(),
                 new Ubicacion(dto.getLatitud(), dto.getLongitud()),
-                dto.getCreated_at().toLocalDate(),
+                dto.getCreated_at().toLocalDateTime(),
                 new FuenteCargaManual("Api Cátedra"));
     }
 }

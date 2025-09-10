@@ -1,5 +1,6 @@
 package ar.utn.ba.ddsi.administrador.agregador.controller;
 
+import ar.utn.ba.ddsi.administrador.agregador.dto.*;
 import ar.edu.utn.frba.dds.models.entities.coleccion.Coleccion;
 import ar.edu.utn.frba.dds.models.entities.coleccion.Hecho;
 import ar.edu.utn.frba.dds.models.entities.coleccion.SolicitudEliminacion;
@@ -8,18 +9,14 @@ import ar.edu.utn.frba.dds.models.entities.fuente.FuenteCargaManual;
 import ar.edu.utn.frba.dds.models.entities.fuente.FuenteContribuyente;
 import ar.edu.utn.frba.dds.models.entities.fuente.FuenteDataset;
 import ar.edu.utn.frba.dds.models.entities.interfaces.AlgoritmoDeConsenso;
-import ar.utn.ba.ddsi.administrador.agregador.dto.ColeccionRequestDTO;
-import ar.utn.ba.ddsi.administrador.agregador.dto.ColeccionResponseDTO;
-import ar.utn.ba.ddsi.administrador.agregador.dto.SolicitudRequestDTO;
-import ar.utn.ba.ddsi.administrador.agregador.models.repositories.ISolicitudEliminacionRepository;
-import ar.utn.ba.ddsi.administrador.agregador.services.ISolicitudEliminacionService;
-import ar.utn.ba.ddsi.administrador.service.factory.AlgoritmoDeConsensoFactory;
-import ar.utn.ba.ddsi.administrador.service.factory.FuenteFactory;
-import ar.utn.ba.ddsi.administrador.agregador.dto.FuenteResponseDTO;
 import ar.utn.ba.ddsi.administrador.agregador.models.repositories.IColeccionRepository;
 import ar.utn.ba.ddsi.administrador.agregador.models.repositories.IFuenteRepository;
+import ar.utn.ba.ddsi.administrador.agregador.models.repositories.ISolicitudEliminacionRepository;
+import ar.utn.ba.ddsi.administrador.agregador.services.ISolicitudEliminacionService;
 import ar.utn.ba.ddsi.administrador.agregador.services.impl.ServicioRefrescoColecciones;
 import ar.utn.ba.ddsi.administrador.dto.FuenteDTO;
+import ar.utn.ba.ddsi.administrador.service.factory.AlgoritmoDeConsensoFactory;
+import ar.utn.ba.ddsi.administrador.service.factory.FuenteFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,20 +30,21 @@ public class AgregadorController {
     private final IColeccionRepository coleccionRepository;
     private final IFuenteRepository fuenteRepository;
     private final ServicioRefrescoColecciones servicioRefresco;
-    private final ISolicitudEliminacionService solicitudService;
+    private final ISolicitudEliminacionService solicitudEliminacionService; // Unificada a un solo nombre
     private final ISolicitudEliminacionRepository solicitudRepository;
+
 
     public AgregadorController(
             IColeccionRepository coleccionRepository,
             IFuenteRepository fuenteRepository,
             ServicioRefrescoColecciones servicioRefresco,
-            ISolicitudEliminacionService solicitudService,
+            ISolicitudEliminacionService solicitudEliminacionService, // Unificada
             ISolicitudEliminacionRepository solicitudRepository) {
 
         this.coleccionRepository = coleccionRepository;
         this.fuenteRepository = fuenteRepository;
         this.servicioRefresco = servicioRefresco;
-        this.solicitudService = solicitudService;
+        this.solicitudEliminacionService = solicitudEliminacionService; // Unificada
         this.solicitudRepository = solicitudRepository;
     }
 
@@ -70,7 +68,6 @@ public class AgregadorController {
                 return new FuenteResponseDTO(fuente.getId(), tipo, nombre);
             }).collect(Collectors.toList());
 
-            // Usamos el campo que SÍ se persiste y se carga desde la base de datos.
             String tipoAlgoritmo = coleccion.getTipoAlgoritmo();
 
             return new ColeccionResponseDTO(
@@ -89,9 +86,6 @@ public class AgregadorController {
 
     @GetMapping("/colecciones/{id}")
     public ResponseEntity<Coleccion> obtenerColeccion(@PathVariable Long id) {
-        // --- CORRECCIÓN ---
-        // Usamos findById que devuelve un Optional, y si no encuentra nada,
-        // devolvemos directamente un 404 Not Found.
         return ResponseEntity.of(coleccionRepository.findById(id));
     }
 
@@ -111,22 +105,16 @@ public class AgregadorController {
 
     @GetMapping("/colecciones/{id}/hechos")
     public ResponseEntity<List<Hecho>> obtenerHechosDeColeccion(@PathVariable("id") Long id) {
-        // --- CORRECCIÓN ---
-        // Buscamos la colección. Si existe, extraemos (map) su lista de hechos y la devolvemos.
-        // Si no existe, devolvemos un 404 Not Found.
         return ResponseEntity.of(coleccionRepository.findById(id).map(Coleccion::getHechos));
     }
 
     @PostMapping("/colecciones/{idColeccion}/fuentes/{idFuente}/procesar")
     public ResponseEntity<String> procesarFuenteDeColeccion(@PathVariable("idColeccion") Long idColeccion, @PathVariable("idFuente") Long idFuente) {
-        // --- CORRECCIÓN ---
-        // Buscamos cada entidad y lanzamos una excepción clara si no se encuentra.
         Coleccion coleccion = coleccionRepository.findById(idColeccion)
                 .orElseThrow(() -> new RuntimeException("Colección no encontrada con id: " + idColeccion));
         Fuente fuente = fuenteRepository.findById(idFuente)
                 .orElseThrow(() -> new RuntimeException("Fuente no encontrada con id: " + idFuente));
 
-        // La lógica de negocio no cambia
         if (fuente instanceof FuenteDataset) {
             servicioRefresco.procesarFuenteEstatica(coleccion, (FuenteDataset) fuente);
             return ResponseEntity.ok("Procesamiento de la fuente dataset iniciado.");
@@ -137,8 +125,8 @@ public class AgregadorController {
 
     @PostMapping("/solicitudes-eliminacion")
     @ResponseStatus(HttpStatus.CREATED)
-    public void crearSolicitud(@RequestBody SolicitudRequestDTO dto) { // <-- CAMBIAR EL PARÁMETRO
-        solicitudService.crearSolicitud(dto);
+    public void crearSolicitud(@RequestBody SolicitudRequestDTO dto) {
+        solicitudEliminacionService.crearSolicitud(dto); // Usamos el nombre unificado
     }
 
 
@@ -149,6 +137,11 @@ public class AgregadorController {
 
     @GetMapping("/solicitudes-eliminacion/spam")
     public List<SolicitudEliminacion> listarSolicitudesSpam() {
-        return solicitudService.obtenerSolicitudesSpam();
+        return solicitudEliminacionService.obtenerSolicitudesSpam(); // Usamos el nombre unificado
+    }
+
+    @GetMapping("/solicitudes-eliminacion/estadisticas-spam")
+    public EstadisticasSpamDTO getEstadisticasSpam() {
+        return solicitudEliminacionService.obtenerEstadisticasSpam(); // Usamos el nombre unificado
     }
 }
